@@ -1,7 +1,8 @@
 # semantic-delta-extension
 
 ## 🚨 What this is
-A VS Code extension that lets you run semantic-delta-detector directly in your editor.
+
+A VS Code extension for semantic-delta-detector — compare SQL metrics directly in your editor.
 
 Detect when two SQL queries look similar but represent different business metrics.
 
