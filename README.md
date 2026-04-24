@@ -43,3 +43,9 @@ Catch metric definition drift before it reaches dashboards and business decision
 
 ## 📦 Status
 Early prototype powered by the core semantic-delta-detector engine.
+
+---
+
+## 🔌 VS Code Extension
+Use the detector directly in your editor:
+https://github.com/Ryukanchi/semantic-delta-extension
