@@ -47,6 +47,11 @@ Early prototype powered by the core semantic-delta-detector engine.
 
 ---
 
+## 🧠 Architecture
+This extension is a thin interface layer on top of the semantic-delta-detector core engine.
+
+---
+
 ## 🔌 VS Code Extension
 Use the detector directly in your editor:
 https://github.com/Ryukanchi/semantic-delta-extension
