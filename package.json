@@ -9,6 +9,9 @@
   "categories": [
     "Other"
   ],
+  "dependencies": {
+    "semantic-delta-detector": "file:../semantic-delta-detector"
+  },
   "activationEvents": ["onCommand:semantic-delta.runDemo"],
   "main": "./out/extension.js",
   "contributes": {

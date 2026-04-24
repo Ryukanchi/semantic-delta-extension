@@ -14,7 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.showWarningMessage('Query A was not provided.');
 			return;
 		}
-		55
+
 		const queryB = await vscode.window.showInputBox({
 			title: 'Semantic Delta',
 			prompt: 'Paste Query B',
@@ -26,29 +26,26 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 
-		const tableA = queryA.toLowerCase().match(/from\s+(\w+)/)?.[1];
-		const tableB = queryB.toLowerCase().match(/from\s+(\w+)/)?.[1];
+		const { compareSqlQueries } = await import('semantic-delta-detector');
+		const result = compareSqlQueries(queryA, queryB);
+		const shortExplanation = result.explanation.split('. ')[0];
+		const riskIndicator = {
+			low: '🟢',
+			medium: '🟡',
+			high: '🔴',
+		}[result.risk_level];
+		const message = [
+			'Semantic Delta Result',
+			'',
+			`Similarity: ${result.semantic_similarity_score}%`,
+			`Risk: ${riskIndicator} ${result.risk_level.toUpperCase()}`,
+			`Confidence: ${result.confidence_level.toUpperCase()}`,
+			'',
+			'Explanation:',
+			shortExplanation,
+		].join('\n');
 
-		const whereA = queryA.toLowerCase().match(/where\s+(.+)/)?.[1];
-		const whereB = queryB.toLowerCase().match(/where\s+(.+)/)?.[1];
-		const selectA = queryA.toLowerCase().match(/select\s+(.+?)\s+from/)?.[1];
-		const selectB = queryB.toLowerCase().match(/select\s+(.+?)\s+from/)?.[1];
-
-		let message = '';
-
-		if (tableA !== tableB) {
-		message += `Table changed: ${tableA || 'unknown'} → ${tableB || 'unknown'}\n`;
-		}
-
-		if (whereA !== whereB) {
-		message += `Condition changed: ${whereA || 'none'} → ${whereB || 'none'}`;
-		}
-
-		if (!message) {
-		message = 'No semantic difference detected.';
-		}
-
-		vscode.window.showInformationMessage(message.replace(/\n/g, ' | '));
+		vscode.window.showInformationMessage(message);
 
 		});
 
