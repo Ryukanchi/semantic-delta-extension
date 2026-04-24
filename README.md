@@ -1,59 +1,54 @@
 # semantic-delta-extension
 
-## 🚨 What this is
+## What This Is
 
 ![Extension Demo](docs/assets/extension-demo.png)
 
-A VS Code extension for semantic-delta-detector — compare SQL metrics directly in your editor.
+A VS Code extension for running semantic-delta-detector directly in your editor.
 
-Detect when two SQL queries look similar but represent different business metrics.
+The extension is intentionally thin: it collects two SQL queries, calls the core detector package, and opens the result as a Markdown report.
 
----
+Core detector repo: https://github.com/Ryukanchi/semantic-delta-detector
 
-## 🔌 Powered by
-https://github.com/Ryukanchi/semantic-delta-detector
+## Why It Matters
 
----
+Same-looking SQL can mean different KPIs. This extension helps catch metric definition drift before teams compare incompatible dashboard numbers.
 
-## ⚡ How it works
-- Run command: Semantic Delta: Run Demo
-- Paste two SQL queries
-- Instantly get:
-  - similarity
-  - risk level
-  - confidence
-  - explanation
+## How It Works
 
----
+- Run `Semantic Delta: Run Demo`
+- Enter Query A and Query B
+- The extension calls `semantic-delta-detector`
+- A Markdown report opens in a new editor tab
 
-## 🧪 Example
+The report includes summary, similarity, risk, confidence, business meaning, key findings, explanation, recommendation, and both input queries.
+
+## Example
 
 Query A:
-SELECT COUNT(*) FROM users
+
+```sql
+SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'login'
+```
 
 Query B:
-SELECT COUNT(*) FROM users WHERE active = true
 
-Result:
-- 🟡 Medium risk due to filter difference
+```sql
+SELECT COUNT(*) FROM events WHERE event = 'login'
+```
 
----
+Expected interpretation:
 
-## 💡 Why it matters
-Catch metric definition drift before it reaches dashboards and business decisions.
+- Query A counts unique users with login events.
+- Query B counts login event rows.
+- This is high risk because repeated events by the same user can make row counts larger than user counts.
 
----
+## Architecture
 
-## 📦 Status
-Early prototype powered by the core semantic-delta-detector engine.
+- `semantic-delta-extension` owns the VS Code command and Markdown rendering.
+- `semantic-delta-detector` owns semantic analysis and risk interpretation.
+- The extension does not duplicate detector logic.
 
----
+## Status
 
-## 🧠 Architecture
-This extension is a thin interface layer on top of the semantic-delta-detector core engine.
-
----
-
-## 🔌 VS Code Extension
-Use the detector directly in your editor:
-https://github.com/Ryukanchi/semantic-delta-extension
+Early prototype. The extension is useful for local demos and iteration, but it is not presented as production-ready or marketplace-published.
