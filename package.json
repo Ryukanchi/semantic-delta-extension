@@ -12,13 +12,20 @@
   "dependencies": {
     "semantic-delta-detector": "file:../semantic-delta-detector"
   },
-  "activationEvents": ["onCommand:semantic-delta.runDemo"],
+  "activationEvents": [
+    "onCommand:semantic-delta.runDemo",
+    "onCommand:semantic-delta.runExample"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "semantic-delta.runDemo",
         "title": "Semantic Delta: Run Demo"
+      },
+      {
+        "command": "semantic-delta.runExample",
+        "title": "Semantic Delta: Run Example"
       }
     ]
   },
