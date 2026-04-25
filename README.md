@@ -16,10 +16,10 @@ Same-looking SQL can mean different KPIs. This extension helps catch metric defi
 
 ## How It Works
 
-- Run `Semantic Delta: Run Demo`
-- Enter Query A and Query B
-- The extension calls `semantic-delta-detector`
-- A Markdown report opens in a new editor tab
+- Run `Semantic Delta: Run Example` for a Quick Pick of built-in demo cases.
+- Select an example to open a Markdown report.
+- Run `Semantic Delta: Run Demo` to enter custom Query A and Query B.
+- The extension calls `semantic-delta-detector` for the semantic comparison.
 
 The report includes summary, similarity, risk, confidence, business meaning, key findings, explanation, recommendation, and both input queries.
 
