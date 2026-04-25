@@ -28,24 +28,55 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const { compareSqlQueries } = await import('semantic-delta-detector');
 		const result = compareSqlQueries(queryA, queryB);
-		const shortExplanation = result.explanation.split('. ')[0];
 		const riskIndicator = {
 			low: '🟢',
 			medium: '🟡',
 			high: '🔴',
-		}[result.risk_level];
-		const message = [
-			'Semantic Delta Result',
+		}[result.risk_level as 'low' | 'medium' | 'high'];
+		const findings = result.detected_differences.length === 0
+			? ['- No meaningful semantic differences detected.']
+			: result.detected_differences.map(
+				(difference) => `- **${difference.impact.toUpperCase()}** ${difference.description}`,
+			);
+		const report = [
+			'# Semantic Delta Result',
 			'',
-			`Similarity: ${result.semantic_similarity_score}%`,
-			`Risk: ${riskIndicator} ${result.risk_level.toUpperCase()}`,
-			`Confidence: ${result.confidence_level.toUpperCase()}`,
+			'## Summary',
+			`- Similarity: ${result.semantic_similarity_score}%`,
+			`- Risk: ${riskIndicator} ${result.risk_level.toUpperCase()}`,
+			`- Confidence: ${result.confidence_level.toUpperCase()}`,
 			'',
-			'Explanation:',
-			shortExplanation,
+			'## Business Meaning',
+			`- Query A: ${result.likely_business_meaning_a}`,
+			`- Query B: ${result.likely_business_meaning_b}`,
+			'',
+			'## Key Findings',
+			...findings,
+			'',
+			'## Explanation',
+			result.explanation,
+			'',
+			'## Recommendation',
+			result.recommendation,
+			'',
+			'## Query A',
+			'```sql',
+			queryA,
+			'```',
+			'',
+			'## Query B',
+			'```sql',
+			queryB,
+			'```',
 		].join('\n');
 
-		vscode.window.showInformationMessage(message);
+		const document = await vscode.workspace.openTextDocument({
+			content: report,
+			language: 'markdown',
+		});
+
+		await vscode.window.showTextDocument(document);
+		vscode.window.showInformationMessage('Semantic Delta report generated');
 
 		});
 
