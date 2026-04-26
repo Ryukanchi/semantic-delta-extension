@@ -46,6 +46,14 @@ interface SemanticComparisonResult {
 	}>;
 	explanation: string;
 	recommendation: string;
+	verdict?: string;
+	impact?: {
+		severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+		decisionRisk: string;
+		affectedMeaning: string;
+		recommendedAction: string;
+		evidence: string[];
+	};
 }
 
 function buildMarkdownReport(
@@ -54,39 +62,44 @@ function buildMarkdownReport(
 	queryB: string,
 	title?: string,
 ): string {
-	const riskIndicator = {
-		low: '🟢',
-		medium: '🟡',
-		high: '🔴',
-	}[result.risk_level as 'low' | 'medium' | 'high'];
-	const findings = result.detected_differences.length === 0
+	const evidence = result.impact?.evidence.length
+		? result.impact.evidence.map((item) => `- ${item}`)
+		: result.detected_differences.length === 0
 		? ['- No meaningful semantic differences detected.']
 		: result.detected_differences.map(
 			(difference) => `- **${difference.impact.toUpperCase()}** ${difference.description}`,
 		);
-	const titleLines = title ? ['## Example', title, ''] : [];
+	const summaryLines = [
+		`- Similarity: ${result.semantic_similarity_score}/100`,
+		`- Risk: ${result.risk_level}`,
+		`- Confidence: ${result.confidence_level}`,
+	];
+
+	if (title) {
+		summaryLines.unshift(`- Example: ${title}`);
+	}
 
 	return [
 		'# Semantic Delta Result',
 		'',
-		...titleLines,
+		'## Verdict',
+		result.verdict ?? 'No significant semantic risk detected.',
+		'',
+		'## Business Impact',
+		result.impact?.decisionRisk ?? 'No significant business impact detected.',
+		'',
 		'## Summary',
-		`- Similarity: ${result.semantic_similarity_score}%`,
-		`- Risk: ${riskIndicator} ${result.risk_level.toUpperCase()}`,
-		`- Confidence: ${result.confidence_level.toUpperCase()}`,
+		...summaryLines,
+		'',
+		'## Evidence',
+		...evidence,
 		'',
 		'## Business Meaning',
 		`- Query A: ${result.likely_business_meaning_a}`,
 		`- Query B: ${result.likely_business_meaning_b}`,
 		'',
-		'## Key Findings',
-		...findings,
-		'',
-		'## Explanation',
-		result.explanation,
-		'',
 		'## Recommendation',
-		result.recommendation,
+		result.impact?.recommendedAction ?? result.recommendation,
 		'',
 		'## Query A',
 		'```sql',
