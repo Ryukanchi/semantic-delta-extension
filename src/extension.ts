@@ -1,4 +1,9 @@
 import * as vscode from 'vscode';
+import { validateQuery } from './comparison';
+import { executeCompare } from './compareController';
+import { isSqlDocument, resolveEditorSnapshot, resolveFileUriSnapshot } from './documentResolver';
+import { presentComparison } from './reportController';
+import { ReviewPanel } from './reviewPanel';
 
 interface SemanticDeltaExample {
 	title: string;
@@ -34,83 +39,43 @@ const examples: SemanticDeltaExample[] = [
 	},
 ];
 
-interface SemanticComparisonResult {
-	semantic_similarity_score: number;
-	risk_level: 'low' | 'medium' | 'high';
-	confidence_level: 'low' | 'medium' | 'high';
-	likely_business_meaning_a: string;
-	likely_business_meaning_b: string;
-	detected_differences: Array<{
-		impact: 'low' | 'medium' | 'high';
-		description: string;
-	}>;
-	explanation: string;
-	recommendation: string;
-	verdict?: string;
-	impact?: {
-		severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-		decisionRisk: string;
-		affectedMeaning: string;
-		recommendedAction: string;
-		evidence: string[];
-	};
-}
-
-function buildMarkdownReport(
-	result: SemanticComparisonResult,
-	queryA: string,
-	queryB: string,
-	title?: string,
-): string {
-	const evidence = result.impact?.evidence.length
-		? result.impact.evidence.map((item) => `- ${item}`)
-		: result.detected_differences.length === 0
-		? ['- No meaningful semantic differences detected.']
-		: result.detected_differences.map(
-			(difference) => `- **${difference.impact.toUpperCase()}** ${difference.description}`,
-		);
-	const summaryLines = [
-		`- Similarity: ${result.semantic_similarity_score}/100`,
-		`- Risk: ${result.risk_level}`,
-		`- Confidence: ${result.confidence_level}`,
-	];
-
-	if (title) {
-		summaryLines.unshift(`- Example: ${title}`);
+async function compareSql(): Promise<void> {
+	const activeEditor = vscode.window.activeTextEditor;
+	if (!activeEditor || !isSqlDocument(activeEditor.document)) {
+		vscode.window.showWarningMessage('Semantic Delta: Please open or focus a SQL document (.sql) to compare as "After".');
+		return;
 	}
 
-	return [
-		'# Semantic Delta Result',
-		'',
-		'## Verdict',
-		result.verdict ?? 'No significant semantic risk detected.',
-		'',
-		'## Business Impact',
-		result.impact?.decisionRisk ?? 'No significant business impact detected.',
-		'',
-		'## Summary',
-		...summaryLines,
-		'',
-		'## Evidence',
-		...evidence,
-		'',
-		'## Business Meaning',
-		`- Query A: ${result.likely_business_meaning_a}`,
-		`- Query B: ${result.likely_business_meaning_b}`,
-		'',
-		'## Recommendation',
-		result.impact?.recommendedAction ?? result.recommendation,
-		'',
-		'## Query A',
-		'```sql',
-		queryA,
-		'```',
-		'',
-		'## Query B',
-		'```sql',
-		queryB,
-		'```',
-	].join('\n');
+	const selectedUris = await vscode.window.showOpenDialog({
+		canSelectFiles: true,
+		canSelectFolders: false,
+		canSelectMany: false,
+		openLabel: 'Select Before SQL',
+		title: 'Semantic Delta: Select "Before" SQL Document',
+		filters: {
+			'SQL Files': ['sql'],
+			'All Files': ['*'],
+		},
+	});
+
+	if (!selectedUris || selectedUris.length === 0) {
+		return;
+	}
+
+	const beforeUri = selectedUris[0];
+	const afterSnapshot = resolveEditorSnapshot(activeEditor);
+
+	let beforeSnapshot;
+	try {
+		beforeSnapshot = await resolveFileUriSnapshot(beforeUri);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Failed to read file.';
+		vscode.window.showErrorMessage(`Semantic Delta: Could not read Before file: ${message}`);
+		return;
+	}
+
+	const panel = ReviewPanel.createOrShow();
+	await executeCompare(beforeSnapshot, afterSnapshot, panel);
 }
 
 async function openMarkdownReport(report: string): Promise<void> {
@@ -124,33 +89,33 @@ async function openMarkdownReport(report: string): Promise<void> {
 }
 
 async function runComparisonReport(queryA: string, queryB: string, title?: string): Promise<void> {
-	const { compareSqlQueries } = await import('semantic-delta-detector');
-	const result = compareSqlQueries(queryA, queryB);
-	const report = buildMarkdownReport(result, queryA, queryB, title);
-
-	await openMarkdownReport(report);
+	await presentComparison(queryA, queryB, {
+		showReport: openMarkdownReport,
+		showValidationError: message => { void vscode.window.showWarningMessage(message); },
+		showOperationalError: message => { void vscode.window.showErrorMessage(message); },
+	}, title);
 }
 
 async function runDemo(): Promise<void> {
 	const queryA = await vscode.window.showInputBox({
 		title: 'Semantic Delta',
 		prompt: 'Paste Query A',
+		validateInput: value => validateQuery(value, 'Query A'),
 		placeHolder: 'SELECT * FROM events WHERE event = \'login\'',
 	});
 
-	if (!queryA) {
-		vscode.window.showWarningMessage('Query A was not provided.');
+	if (queryA === undefined) {
 		return;
 	}
 
 	const queryB = await vscode.window.showInputBox({
 		title: 'Semantic Delta',
 		prompt: 'Paste Query B',
+		validateInput: value => validateQuery(value, 'Query B'),
 		placeHolder: 'SELECT * FROM users WHERE subscription_status = \'paid\'',
 	});
 
-	if (!queryB) {
-		vscode.window.showWarningMessage('Query B was not provided.');
+	if (queryB === undefined) {
 		return;
 	}
 
@@ -181,10 +146,11 @@ async function runExample(): Promise<void> {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+	const compareSqlDisposable = vscode.commands.registerCommand('semantic-delta.compareSql', compareSql);
 	const runDemoDisposable = vscode.commands.registerCommand('semantic-delta.runDemo', runDemo);
 	const runExampleDisposable = vscode.commands.registerCommand('semantic-delta.runExample', runExample);
 
-	context.subscriptions.push(runDemoDisposable, runExampleDisposable);
+	context.subscriptions.push(compareSqlDisposable, runDemoDisposable, runExampleDisposable);
 }
 
 export function deactivate() {}
