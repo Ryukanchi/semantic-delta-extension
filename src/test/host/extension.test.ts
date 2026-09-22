@@ -5,6 +5,7 @@ import { executeCompare } from '../../compareController';
 import { isSqlDocument, resolveEditorSnapshot } from '../../documentResolver';
 import { presentComparison } from '../../reportController';
 import { ReviewPanel } from '../../reviewPanel';
+import { pickWorkspaceBeforeSql } from '../../workspaceSqlDiscovery';
 
 suite('Extension Host integration', () => {
     test('activates the development extension and registers all three commands', async () => {
@@ -99,5 +100,129 @@ suite('Extension Host integration', () => {
         }
 
         panel.dispose();
+    });
+
+    test('pickWorkspaceBeforeSql discovers SQL files, presents useful relative labels, and returns selected URI', async () => {
+        const fakeUri1 = vscode.Uri.file('/workspace/models/orders.sql');
+        const fakeUri2 = vscode.Uri.file('/workspace/staging/stg_users.sql');
+        let quickPickItems: Array<{ label: string; uri: vscode.Uri }> | undefined;
+
+        const selectedUri = await pickWorkspaceBeforeSql({
+            findFiles: async () => [fakeUri1, fakeUri2],
+            asRelativePath: pathOrUri => (typeof pathOrUri === 'string' ? pathOrUri : pathOrUri.path).replace(/^\/workspace\//, ''),
+            showQuickPick: async <T extends vscode.QuickPickItem>(items: T[] | Thenable<T[]>) => {
+                const resolved = await items;
+                quickPickItems = resolved as unknown as Array<{ label: string; uri: vscode.Uri }>;
+                return resolved[0];
+            },
+        });
+
+        assert.ok(quickPickItems);
+        assert.equal(quickPickItems.length, 2);
+        // Useful relative labels sorted alphabetically
+        assert.equal(quickPickItems[0].label, 'models/orders.sql');
+        assert.equal(quickPickItems[1].label, 'staging/stg_users.sql');
+        assert.equal(selectedUri, fakeUri1);
+    });
+
+    test('pickWorkspaceBeforeSql shows warning and returns undefined when workspace has no SQL files', async () => {
+        let warningShown = '';
+
+        const result = await pickWorkspaceBeforeSql({
+            findFiles: async () => [],
+            showWarningMessage: async (msg: string) => {
+                warningShown = msg;
+                return undefined;
+            },
+        });
+
+        assert.equal(result, undefined);
+        assert.ok(warningShown.includes('No SQL files found in the current workspace'));
+    });
+
+    test('pickWorkspaceBeforeSql exits cleanly with undefined when user cancels QuickPick', async () => {
+        let warningShown = false;
+
+        const result = await pickWorkspaceBeforeSql({
+            findFiles: async () => [vscode.Uri.file('/workspace/query.sql')],
+            asRelativePath: () => 'query.sql',
+            showQuickPick: async () => undefined, // user pressed Escape
+            showWarningMessage: async () => {
+                warningShown = true;
+                return undefined;
+            },
+        });
+
+        assert.equal(result, undefined);
+        assert.equal(warningShown, false, 'Cancellation must not show an error or warning');
+    });
+
+    test('selected Before file is compared against active After editor preserving unsaved buffer', async () => {
+        // Open an active SQL editor with unsaved edits
+        const afterDoc = await vscode.workspace.openTextDocument({
+            content: 'SELECT COUNT(*) FROM users WHERE is_active = true',
+            language: 'sql',
+        });
+        const editor = await vscode.window.showTextDocument(afterDoc);
+        assert.equal(vscode.window.activeTextEditor, editor);
+
+        // Before file snapshot
+        const beforeSnapshot = {
+            label: 'users.before.sql',
+            text: 'SELECT COUNT(*) FROM users',
+        };
+        const afterSnapshot = resolveEditorSnapshot(editor);
+        assert.equal(afterSnapshot.text, 'SELECT COUNT(*) FROM users WHERE is_active = true');
+
+        const panel = ReviewPanel.createOrShow();
+        const outcome = await executeCompare(beforeSnapshot, afterSnapshot, panel);
+
+        assert.equal(outcome.kind, 'result');
+        if (outcome.kind === 'result') {
+            assert.ok(outcome.result.detected_differences.length > 0);
+            assert.ok(outcome.result.detected_differences.some(d => d.category === 'filter_logic_mismatch' || d.category === 'business_logic_mismatch'));
+        }
+
+        panel.dispose();
+        await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
+    });
+
+    test('pickWorkspaceBeforeSql excludes active After file from candidates and another file remains selectable', async () => {
+        const afterUri = vscode.Uri.file('/workspace/models/orders.after.sql');
+        const beforeUri = vscode.Uri.file('/workspace/models/orders.before.sql');
+        let quickPickItems: Array<{ label: string; uri: vscode.Uri }> | undefined;
+
+        const selectedUri = await pickWorkspaceBeforeSql({
+            activeAfterUri: afterUri,
+            findFiles: async () => [afterUri, beforeUri],
+            asRelativePath: pathOrUri => (typeof pathOrUri === 'string' ? pathOrUri : pathOrUri.path).replace(/^\/workspace\//, ''),
+            showQuickPick: async <T extends vscode.QuickPickItem>(items: T[] | Thenable<T[]>) => {
+                const resolved = await items;
+                quickPickItems = resolved as unknown as Array<{ label: string; uri: vscode.Uri }>;
+                return resolved[0];
+            },
+        });
+
+        assert.ok(quickPickItems);
+        assert.equal(quickPickItems.length, 1);
+        assert.equal(quickPickItems[0].label, 'models/orders.before.sql');
+        assert.equal(selectedUri, beforeUri);
+    });
+
+    test('pickWorkspaceBeforeSql treats workspace with only the active After file as empty candidate set', async () => {
+        const afterUri = vscode.Uri.file('/workspace/models/orders.after.sql');
+        let warningShown = '';
+
+        const result = await pickWorkspaceBeforeSql({
+            activeAfterUri: afterUri,
+            findFiles: async () => [afterUri],
+            showWarningMessage: async (msg: string) => {
+                warningShown = msg;
+                return undefined;
+            },
+        });
+
+        assert.equal(result, undefined);
+        assert.ok(warningShown.includes('No SQL files found in the current workspace'));
     });
 });

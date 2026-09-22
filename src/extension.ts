@@ -4,6 +4,7 @@ import { executeCompare } from './compareController';
 import { isSqlDocument, resolveEditorSnapshot, resolveFileUriSnapshot } from './documentResolver';
 import { presentComparison } from './reportController';
 import { ReviewPanel } from './reviewPanel';
+import { pickWorkspaceBeforeSql } from './workspaceSqlDiscovery';
 
 interface SemanticDeltaExample {
 	title: string;
@@ -46,23 +47,13 @@ async function compareSql(): Promise<void> {
 		return;
 	}
 
-	const selectedUris = await vscode.window.showOpenDialog({
-		canSelectFiles: true,
-		canSelectFolders: false,
-		canSelectMany: false,
-		openLabel: 'Select Before SQL',
-		title: 'Semantic Delta: Select "Before" SQL Document',
-		filters: {
-			'SQL Files': ['sql'],
-			'All Files': ['*'],
-		},
+	const beforeUri = await pickWorkspaceBeforeSql({
+		activeAfterUri: activeEditor.document.uri,
 	});
-
-	if (!selectedUris || selectedUris.length === 0) {
+	if (!beforeUri) {
 		return;
 	}
 
-	const beforeUri = selectedUris[0];
 	const afterSnapshot = resolveEditorSnapshot(activeEditor);
 
 	let beforeSnapshot;
