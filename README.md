@@ -30,9 +30,12 @@ to a database.
 
 The Review WebView displays the engine's risk, confidence, heuristic similarity,
 evidence sources, findings, limitations, explanation, business meaning,
-recommendation, and optional verdict and impact. The two SQL snapshots remain
-visible for validation and operational errors. An operational failure has no
-semantic assessment: risk and confidence are **Not assessed**.
+recommendation, and optional verdict and impact. A unified line-by-line SQL text
+diff highlights added, removed, and unchanged lines with corresponding line
+numbers (Before / After), while preserving full SQL snapshots. Text diffing is
+strictly syntactic and clearly separated from semantic engine findings. The two
+SQL snapshots remain visible for validation and operational errors. An operational
+failure has no semantic assessment: risk and confidence are **Not assessed**.
 
 Risk estimates the possible effect of a change. Confidence describes the
 strength and completeness of available evidence. They are independent. A high
@@ -42,7 +45,7 @@ prove that the queries are equivalent or safe. No reported parser limitations
 does not establish complete SQL coverage. Semantic Delta is not a SQL validator.
 
 The WebView is currently a read-only result view. The Markdown-report commands
-remain available. There is no WebView editing, retry button, SQL diff, Git mode,
+remain available. There is no WebView editing, retry button, Git mode,
 or PostgreSQL mode in this extension yet.
 
 ## Example

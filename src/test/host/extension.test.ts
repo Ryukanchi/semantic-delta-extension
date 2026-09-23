@@ -133,6 +133,11 @@ suite('Extension Host integration', () => {
             assert.equal(outcome.result.confidence_level, 'low');
         }
 
+        const webviewHtml = (panel as unknown as { panel: vscode.WebviewPanel }).panel.webview.html;
+        assert.ok(webviewHtml.includes('SQL Diff'));
+        assert.ok(webviewHtml.includes('Unified Text Diff'));
+        assert.ok(webviewHtml.includes('SQL Snapshots'));
+
         panel.dispose();
     });
 

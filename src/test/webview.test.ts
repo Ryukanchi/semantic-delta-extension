@@ -1,7 +1,7 @@
 import * as assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { SemanticComparisonResult } from 'semantic-delta-detector' with { 'resolution-mode': 'import' };
-import { escapeHtml, renderHtml } from '../webview/renderHtml';
+import { escapeHtml, formatDecisionRisk, renderHtml } from '../webview/renderHtml';
 import type { WebviewState } from '../webview/types';
 
 const mockResult: SemanticComparisonResult = {
@@ -117,6 +117,46 @@ test('renderHtml shows every supplied verdict and impact field without inventing
     });
     assert.ok(!withoutOptionalFields.includes('Business Impact'));
     assert.ok(!withoutOptionalFields.includes('Metric meaning changed.'));
+});
+
+test('formatDecisionRisk strips leading Decision risk: prefix case-insensitively', () => {
+    assert.equal(
+        formatDecisionRisk('Decision risk: aggregation changes may change what is counted.'),
+        'aggregation changes may change what is counted.',
+    );
+    assert.equal(
+        formatDecisionRisk('decision risk:  join changes may include or exclude users.'),
+        'join changes may include or exclude users.',
+    );
+    assert.equal(
+        formatDecisionRisk('No significant business impact detected.'),
+        'No significant business impact detected.',
+    );
+});
+
+test('renderHtml avoids duplicate Decision risk: label when impact.decisionRisk contains the prefix', () => {
+    const richResult: SemanticComparisonResult = {
+        ...mockResult,
+        impact: {
+            severity: 'HIGH',
+            decisionRisk: 'Decision risk: aggregation changes may change what is counted.',
+            affectedMeaning: 'Before includes all orders; After includes matched orders.',
+            recommendedAction: 'Review customer matching before release.',
+            evidence: ['LEFT JOIN became INNER JOIN.'],
+        },
+    };
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'a.sql',
+        afterLabel: 'b.sql',
+        beforeSql: 'SELECT 1',
+        afterSql: 'SELECT 2',
+        outcome: { kind: 'result', result: richResult },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('<p><strong>Decision risk:</strong> aggregation changes may change what is counted.</p>'));
+    assert.ok(!html.includes('Decision risk: Decision risk:'));
 });
 
 test('renderHtml shows exact normalized context for both sides and escapes it', () => {
@@ -287,4 +327,73 @@ test('escapeHtml prevents XSS injection in all rendered fields', () => {
     assert.ok(!html.includes('<script>'));
     assert.ok(!html.includes('<img src=x'));
     assert.ok(html.includes('&lt;script&gt;'));
+});
+
+test('renderHtml renders SQL Diff section with unified diff lines, line numbers, and changes', () => {
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'orders.before.sql',
+        afterLabel: 'orders.after.sql',
+        beforeSql: 'SELECT total FROM orders LEFT JOIN users ON orders.user_id = users.id;',
+        afterSql: 'SELECT total FROM orders INNER JOIN users ON orders.user_id = users.id;\nAND total > 100;',
+        outcome: {
+            kind: 'result',
+            result: mockResult,
+        },
+    };
+
+    const html = renderHtml(state);
+
+    assert.ok(html.includes('SQL Diff'));
+    assert.ok(html.includes('Unified Text Diff'));
+    assert.ok(html.includes('diff-stat-removed'));
+    assert.ok(html.includes('diff-stat-added'));
+    assert.ok(html.includes('-1'));
+    assert.ok(html.includes('+2'));
+    assert.ok(html.includes('marker-removed'));
+    assert.ok(html.includes('marker-added'));
+    assert.ok(html.includes('diff-nums'));
+    assert.ok(html.includes('LEFT JOIN users'));
+    assert.ok(html.includes('INNER JOIN users'));
+    assert.ok(html.includes('AND total &gt; 100;'));
+    assert.ok(html.includes('Text diff only. Line changes are not mapped to specific semantic findings.'));
+});
+
+test('renderHtml renders SQL Diff with identical text badge when SQLs match', () => {
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'query.sql',
+        afterLabel: 'query.sql',
+        beforeSql: 'SELECT 1;',
+        afterSql: 'SELECT 1;',
+        outcome: {
+            kind: 'result',
+            result: mockResult,
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('Identical text'));
+    assert.ok(html.includes('1 / 1'));
+    assert.ok(html.includes('SELECT 1;'));
+});
+
+test('renderHtml preserves SQL Snapshots alongside SQL Diff', () => {
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'a.sql',
+        afterLabel: 'b.sql',
+        beforeSql: 'SELECT a;',
+        afterSql: 'SELECT b;',
+        outcome: {
+            kind: 'result',
+            result: mockResult,
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('SQL Diff'));
+    assert.ok(html.includes('SQL Snapshots'));
+    assert.ok(html.includes('Before SQL'));
+    assert.ok(html.includes('After SQL'));
 });

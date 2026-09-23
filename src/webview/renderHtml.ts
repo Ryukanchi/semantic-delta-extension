@@ -1,5 +1,6 @@
 import type { DetectedDifference, SemanticComparisonResult } from 'semantic-delta-detector' with { 'resolution-mode': 'import' };
 import { normalizeComparisonContext, type ComparisonContextPayload, type SupportedContextFields } from '../context/contextTypes';
+import { computeLineDiff, type DiffLine } from '../diff/lineDiff';
 import type { WebviewState } from './types';
 
 export function escapeHtml(value: string): string {
@@ -22,6 +23,10 @@ function renderImpactBadge(impact: string): string {
 
 function renderCategoryBadge(category: string): string {
     return `<span class="badge badge-category">${escapeHtml(category)}</span>`;
+}
+
+export function formatDecisionRisk(decisionRisk: string): string {
+    return decisionRisk.replace(/^Decision risk:\s*/i, '');
 }
 
 function renderSqlBlock(title: string, label: string, sql: string): string {
@@ -129,6 +134,50 @@ function renderComparisonContext(context?: ComparisonContextPayload): string {
     `;
 }
 
+function renderDiffLine(line: DiffLine): string {
+    const marker = line.type === 'added' ? '+' : line.type === 'removed' ? '-' : ' ';
+    const beforeNum = line.beforeLineNumber !== undefined ? String(line.beforeLineNumber) : '-';
+    const afterNum = line.afterLineNumber !== undefined ? String(line.afterLineNumber) : '-';
+    const rowClass = line.type === 'added' ? 'diff-row diff-added' : line.type === 'removed' ? 'diff-row diff-removed' : 'diff-row';
+    const markerClass = line.type === 'added' ? 'diff-marker marker-added' : line.type === 'removed' ? 'diff-marker marker-removed' : 'diff-marker';
+
+    return `<div class="${rowClass}"><span class="${markerClass}">${marker}</span><span class="diff-nums">${beforeNum} / ${afterNum}</span><span class="diff-code">${escapeHtml(line.text)}</span></div>`;
+}
+
+function renderSqlDiff(beforeLabel: string, afterLabel: string, beforeSql: string, afterSql: string): string {
+    const diff = computeLineDiff(beforeSql, afterSql);
+    const renderedLines = diff.lines.map(renderDiffLine).join('\n');
+
+    const statsBadge = diff.hasChanges
+        ? `<span class="diff-stat-badge diff-stat-removed">-${diff.removedCount}</span> <span class="diff-stat-badge diff-stat-added">+${diff.addedCount}</span>`
+        : '<span class="diff-stat-badge diff-stat-identical">Identical text</span>';
+
+    return `
+        <div class="diff-box">
+            <div class="diff-header">
+                <div class="diff-header-info">
+                    <span class="diff-title">Unified Text Diff</span>
+                    <span class="diff-subtitle">${escapeHtml(beforeLabel)} ➔ ${escapeHtml(afterLabel)} · Lines: Before / After</span>
+                </div>
+                <div class="diff-stats">
+                    ${statsBadge}
+                </div>
+            </div>
+            <div class="diff-body">
+                ${renderedLines}
+                ${diff.isTruncated ? `<div class="diff-truncated-notice">Diff display capped at ${diff.lines.length} lines.</div>` : ''}
+            </div>
+            <div class="diff-footer">
+                <div class="diff-legend">
+                    <span class="diff-legend-item marker-removed">- Removed</span>
+                    <span class="diff-legend-item marker-added">+ Added</span>
+                </div>
+                <div class="diff-disclaimer">Text diff only. Line changes are not mapped to specific semantic findings.</div>
+            </div>
+        </div>
+    `;
+}
+
 function renderSemanticResult(result: SemanticComparisonResult, beforeLabel: string, afterLabel: string, beforeSql: string, afterSql: string): string {
     const riskTone = result.risk_level === 'high' ? 'red' : result.risk_level === 'medium' ? 'amber' : 'petrol';
     const confTone = result.confidence_level === 'high' ? 'petrol' : 'amber';
@@ -174,7 +223,7 @@ function renderSemanticResult(result: SemanticComparisonResult, beforeLabel: str
             <h2 class="section-title">Business Impact</h2>
             <div class="card">
                 <p><strong>Severity:</strong> ${escapeHtml(result.impact.severity)}</p>
-                <p><strong>Decision risk:</strong> ${escapeHtml(result.impact.decisionRisk)}</p>
+                <p><strong>Decision risk:</strong> ${escapeHtml(formatDecisionRisk(result.impact.decisionRisk))}</p>
                 <p><strong>Affected meaning:</strong> ${escapeHtml(result.impact.affectedMeaning)}</p>
                 ${result.impact.evidence.length > 0 ? `<h3>Impact evidence</h3><ul>${result.impact.evidence
                     .map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : ''}
@@ -190,6 +239,11 @@ function renderSemanticResult(result: SemanticComparisonResult, beforeLabel: str
                     <p class="action-text">${escapeHtml(result.impact.recommendedAction)}</p>
                 </div>
             ` : ''}
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">SQL Diff</h2>
+            ${renderSqlDiff(beforeLabel, afterLabel, beforeSql, afterSql)}
         </div>
 
         <div class="section">
@@ -252,6 +306,11 @@ function renderContent(state: WebviewState): string {
                 <h2 class="error-title">Operational Analysis Error</h2>
                 <p class="error-message">${escapeHtml(outcome.message)}</p>
                 <p class="error-note">Static analysis failed without producing a result. Risk and confidence are not assessed.</p>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">SQL Diff</h2>
+                ${renderSqlDiff(beforeLabel, afterLabel, beforeSql, afterSql)}
             </div>
 
             <div class="section">
@@ -663,6 +722,181 @@ export function renderHtml(state: WebviewState): string {
             overflow-x: auto;
             white-space: pre-wrap;
             word-break: break-word;
+        }
+
+        .diff-box {
+            background-color: var(--sd-sql-bg);
+            border: 1px solid var(--sd-sql-border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .diff-header {
+            background-color: var(--sd-sql-header);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--sd-sql-border);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .diff-header-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .diff-title {
+            color: var(--sd-sql-text);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .diff-subtitle {
+            color: #93A7AE;
+            font-family: var(--sd-font-mono);
+            font-size: 11px;
+        }
+
+        .diff-stats {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .diff-stat-badge {
+            font-family: var(--sd-font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 3px;
+            line-height: 1.2;
+        }
+
+        .diff-stat-removed {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #F87171;
+            border: 1px solid rgba(220, 53, 69, 0.4);
+        }
+
+        .diff-stat-added {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: #4ADE80;
+            border: 1px solid rgba(40, 167, 69, 0.4);
+        }
+
+        .diff-stat-identical {
+            background-color: rgba(147, 167, 174, 0.15);
+            color: #93A7AE;
+            border: 1px solid rgba(147, 167, 174, 0.3);
+        }
+
+        .diff-body {
+            padding: 4px 0;
+            overflow-x: auto;
+        }
+
+        .diff-row {
+            display: flex;
+            align-items: baseline;
+            padding: 1px 12px;
+            font-family: var(--sd-font-mono);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .diff-row:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .diff-added {
+            background-color: rgba(40, 167, 69, 0.18);
+        }
+
+        .diff-removed {
+            background-color: rgba(220, 53, 69, 0.18);
+        }
+
+        .diff-marker {
+            width: 20px;
+            text-align: center;
+            font-weight: 600;
+            user-select: none;
+            color: var(--sd-text-muted);
+            flex-shrink: 0;
+        }
+
+        .marker-added {
+            color: #4ADE80;
+        }
+
+        .marker-removed {
+            color: #F87171;
+        }
+
+        .diff-nums {
+            width: 80px;
+            text-align: right;
+            padding-right: 14px;
+            color: #7E939B;
+            user-select: none;
+            flex-shrink: 0;
+            font-size: 11px;
+        }
+
+        .diff-code {
+            flex: 1;
+            color: var(--sd-sql-text);
+            white-space: pre-wrap;
+            word-break: break-word;
+            min-height: 1.5em;
+        }
+
+        .diff-added .diff-code {
+            color: #E6EDF3;
+        }
+
+        .diff-removed .diff-code {
+            color: #E6EDF3;
+        }
+
+        .diff-truncated-notice {
+            padding: 8px 12px;
+            color: var(--sd-amber-text);
+            background-color: var(--sd-amber-bg);
+            font-size: 12px;
+            font-style: italic;
+            border-top: 1px solid var(--sd-sql-border);
+        }
+
+        .diff-footer {
+            background-color: var(--sd-sql-header);
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--sd-sql-border);
+            font-size: 11px;
+            color: var(--sd-text-muted);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .diff-legend {
+            display: flex;
+            gap: 12px;
+        }
+
+        .diff-legend-item {
+            font-family: var(--sd-font-mono);
+            font-weight: 600;
+        }
+
+        .diff-disclaimer {
+            font-style: italic;
+            color: #8C9FA5;
         }
 
         .app-footer {
