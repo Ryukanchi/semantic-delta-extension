@@ -80,10 +80,9 @@ do not cancel computation. There is no full-analysis worker, timeout, or
 cancellation yet. The detector's opt-in PostgreSQL parser worker is not used by
 this extension.
 
-The pinned 1.0.2 archive still contains a domain-specific LEFT-to-INNER join
-explanation that can name users and orders for unrelated tables. A correction
-in the detector source checkout is not part of this immutable archive; the
-extension needs a separately versioned, verified engine upgrade to receive it.
+The pinned 1.0.3 archive includes the table-aware LEFT-to-INNER join
+explanation that references the actual joined table rather than hard-coded
+users/orders wording.
 
 Empty or whitespace-only input is rejected before loading the engine. Other
 thrown engine/import errors are operational failures, not synthetic low-risk
@@ -109,7 +108,7 @@ The current tests exercise real engine results, context and error paths,
 rendering, activation, source snapshots, and panel delivery. They do not drive
 all Quick Pick and Input Box interactions as a human would.
 
-Use F5 for the development host. The detector dependency is the pinned 1.0.2
+Use F5 for the development host. The detector dependency is the pinned 1.0.3
 archive in `vendor/`, installed according to `package-lock.json`; the extension
 does not need a neighboring detector checkout. The source checkout documents
 archive provenance and upgrades in `vendor/README.md`.

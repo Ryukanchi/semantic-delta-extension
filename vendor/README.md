@@ -1,16 +1,15 @@
 # Pinned engine artifact
 
-The extension installs `semantic-delta-detector-1.0.2.tgz` from this directory.
-This is the unchanged package validated in the engine's 2026-09-21 handoff.
+The extension installs `semantic-delta-detector-1.0.3.tgz` from this directory.
+This is the verified package containing the LEFT-to-INNER join explanation fix.
 
 | Provenance | Value |
 | --- | --- |
-| Package | `semantic-delta-detector@1.0.2` |
+| Package | `semantic-delta-detector@1.0.3` |
 | Source repository | https://github.com/Ryukanchi/semantic-delta-detector |
-| Source commit | `4be996823978be175253cdb760aba44448650d6b` |
-| Source tag | `v1.0.2` |
-| SHA-256 | `887d2b312d1517a20ca49775a19f6c18a2ac157f2e9d5b17e72ddce32fefd464` |
-| Archive size | 402,442 bytes |
+| Source commit | Local 1.0.3 build with table-aware join explanation |
+| SHA-256 | `4e9301dd06691ab4d0144ed0aebd7a614174006075281c4a9189a4529e3eb2e0` |
+| Archive size | 402,638 bytes |
 | Contents | 71 files, including compiled ESM, declarations, Worker modules and MIT license |
 | Extension baseline before integration | `b8c1f20f0d80e3a1d5652629a8fcff745b49a951` |
 

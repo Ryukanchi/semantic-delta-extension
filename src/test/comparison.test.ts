@@ -334,3 +334,20 @@ test('real engine detects team_context_mismatch when team contexts differ betwee
     assert.ok(outcome.result.detected_differences.some(d => d.category === 'team_context_mismatch'));
     assert.ok(outcome.result.evidence_sources.includes('team_context'));
 });
+
+test('real loaded engine 1.0.3 uses actual joined table name for LEFT to INNER join explanation', async () => {
+    const queryA = 'SELECT SUM(o.total) FROM orders o LEFT JOIN customers c ON o.customer_id = c.id';
+    const queryB = 'SELECT SUM(o.total) FROM orders o INNER JOIN customers c ON o.customer_id = c.id';
+
+    const outcome = await compareQueries(queryA, queryB);
+    assert.equal(outcome.kind, 'result');
+    if (outcome.kind !== 'result') {
+        throw new Error('Expected result');
+    }
+
+    const finding = outcome.result.detected_differences.find(d => d.category === 'join_type_mismatch');
+    assert.ok(finding, 'Expected join_type_mismatch finding');
+    assert.equal(finding.impact, 'high');
+    assert.match(finding.description, /without a match in customers/i);
+    assert.doesNotMatch(finding.description, /users without matching orders/i);
+});
