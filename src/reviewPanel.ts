@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import type { ComparisonOutcome } from './comparison';
 import type { ReviewView } from './compareController';
+import type { ComparisonContextPayload } from './context/contextTypes';
 import { renderHtml } from './webview/renderHtml';
 import type { WebviewState } from './webview/types';
 
@@ -63,6 +64,7 @@ export class ReviewPanel implements ReviewView {
         beforeSql: string,
         afterSql: string,
         outcome: ComparisonOutcome,
+        context?: ComparisonContextPayload,
     ): boolean {
         if (requestId !== this.currentRequestId || this.isDisposed) {
             // Stale result or disposed panel; discard.
@@ -76,6 +78,7 @@ export class ReviewPanel implements ReviewView {
             beforeSql,
             afterSql,
             outcome,
+            context,
         });
         return true;
     }

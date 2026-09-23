@@ -1,46 +1,100 @@
-# semantic-delta-extension
+# Semantic Delta VS Code extension
 
-## What This Is
+Semantic Delta compares the meaning of two SQL queries in VS Code. It uses the
+public `semantic-delta-detector` API for findings, risk, confidence, explanation,
+and recommendations. Analysis is local and static: SQL is never executed or sent
+to a database.
 
-![Extension Demo](docs/assets/extension-demo.png)
+## Commands
 
-A VS Code extension for running semantic-delta-detector directly in your editor.
+| Command | Current behavior |
+| --- | --- |
+| `Semantic Delta: Compare SQL` | Compare the active SQL editor as **After** with a **Before** `.sql` file selected from the workspace, then open a Review WebView. |
+| `Semantic Delta: Run Demo` | Enter Query A and Query B in VS Code input boxes and open a Markdown report. |
+| `Semantic Delta: Run Example` | Select one of the built-in SQL pairs and open a Markdown report. |
 
-The extension is intentionally thin: it collects two SQL queries, calls the core detector package, and opens the result as a Markdown report.
+### Before/After workflow
 
-Core detector repo: https://github.com/Ryukanchi/semantic-delta-detector
+1. Open or focus a SQL document (`sql` language mode or `.sql` filename). Its
+   current editor buffer, including unsaved changes, will be **After**.
+2. Run **Semantic Delta: Compare SQL**. Select a different `.sql` file from the
+   workspace as **Before**. Generated and dependency directories are excluded
+   from the picker. If that file is already open, its unsaved buffer is used.
+3. Choose **Continue with SQL only**, or **Add Context**. Context asks separately
+   for each side's metric name, description, team context, and intended use.
+   Every field is optional; press Enter on an empty field to skip it. The After
+   metric name is not inferred from Before.
+4. Review the result in the WebView. Source labels identify the paths and mark
+   unsaved snapshots. Supplied context is shown separately from engine-derived
+   evidence and is not independently verified.
 
-## Why It Matters
+The Review WebView displays the engine's risk, confidence, heuristic similarity,
+evidence sources, findings, limitations, explanation, business meaning,
+recommendation, and optional verdict and impact. The two SQL snapshots remain
+visible for validation and operational errors. An operational failure has no
+semantic assessment: risk and confidence are **Not assessed**.
 
-Same-looking SQL can mean different KPIs. This extension helps catch metric definition drift before teams compare incompatible dashboard numbers.
+Risk estimates the possible effect of a change. Confidence describes the
+strength and completeness of available evidence. They are independent. A high
+risk result can have low confidence. Similarity is a heuristic score, not
+confidence or proof of equivalence. **No modeled differences detected** does not
+prove that the queries are equivalent or safe. No reported parser limitations
+does not establish complete SQL coverage. Semantic Delta is not a SQL validator.
 
-## How It Works
+The WebView is currently a read-only result view. The Markdown-report commands
+remain available. There is no WebView editing, retry button, SQL diff, Git mode,
+or PostgreSQL mode in this extension yet.
 
-- Run `Semantic Delta: Run Example` for a Quick Pick of built-in demo cases.
-- Select an example to open a Markdown report.
-- Run `Semantic Delta: Run Demo` to enter custom Query A and Query B.
-- The extension calls `semantic-delta-detector` for the semantic comparison.
+## Example
 
-The report includes risk and confidence separately, every finding with category
-and impact, explanation, recommendation, evidence sources, parser limitations,
-business meaning, and both input queries. Similarity is a heuristic score, not
-confidence or proof of equivalence. No findings do not establish safety or
-semantic equivalence, and no reported limitations do not establish full SQL
-coverage. SQL is analyzed locally and is never executed.
+Query A counts unique users with login events:
 
-Empty or whitespace-only inputs are rejected before loading the engine. Import
-or analysis failures produce an error notification with risk and confidence
-not assessed, never a synthetic low-risk report. Engine-returned limitations
-remain part of a semantic result. The current public API has no structured
-exception taxonomy: other thrown engine errors (including rejection of a
-nonempty comment-only input) are treated as failed operations rather than
-classified by parsing error-message text. This extension is not a SQL validator.
+```sql
+SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'login'
+```
 
-## Development setup
+Query B counts login event rows:
 
-Open this repository itself in VS Code. Development checks were run with
-Node 24.18.0. The declared VS Code minimum is 1.110.0; its Extension Host
-was also tested with its bundled Node 22.22.0. Then run:
+```sql
+SELECT COUNT(*) FROM events WHERE event = 'login'
+```
+
+Repeated events from the same user can make these counts differ.
+
+## Architecture and limits
+
+- `src/extension.ts` registers commands and coordinates editor selection.
+- `src/documentResolver.ts` captures the current text and source labels.
+- `src/context/` collects optional, separate Before and After metadata.
+- `src/comparison.ts` loads only the detector's public root API. SQL-only uses
+  `compareSqlQueries`; supplied context uses `compareMetricDefinitions`.
+- `src/compareController.ts` starts comparisons and associates results with a
+  request. `src/reviewPanel.ts` discards results from older requests.
+- `src/webview/renderHtml.ts` renders escaped text in a script-free WebView.
+  The Markdown path uses `src/reportController.ts` and `src/report.ts`.
+
+The lightweight detector comparison currently runs synchronously in the VS Code
+Extension Host after the package loads. Large or difficult inputs can block the
+host. Request IDs prevent an older result from replacing a newer one, but they
+do not cancel computation. There is no full-analysis worker, timeout, or
+cancellation yet. The detector's opt-in PostgreSQL parser worker is not used by
+this extension.
+
+The pinned 1.0.2 archive still contains a domain-specific LEFT-to-INNER join
+explanation that can name users and orders for unrelated tables. A correction
+in the detector source checkout is not part of this immutable archive; the
+extension needs a separately versioned, verified engine upgrade to receive it.
+
+Empty or whitespace-only input is rejected before loading the engine. Other
+thrown engine/import errors are operational failures, not synthetic low-risk
+results; the public API does not provide structured exception codes. Parser
+limitations returned in a valid result remain part of that result.
+
+## Development and verification
+
+The extension declares VS Code `^1.110.0`. Node 24.18.0 was used for local
+development; the VS Code 1.110.0 Extension Host has also been tested. From this
+repository:
 
 ```sh
 npm ci
@@ -48,59 +102,21 @@ npm test
 npm run test:extension
 ```
 
-`npm test` verifies the pinned engine archive, compiles the extension, runs
-lint, and executes the Node integration/unit tests against the installed real
-engine plus explicit failure fixtures. `npm run test:extension` compiles and
-lints, then downloads VS Code 1.110.0 into `.vscode-test` and runs the Extension
-Host tests with isolated profiles. These tests cover activation, command
-registration, and opening a real limited analysis as a Markdown document.
-They do not automate typing into InputBox or QuickPick.
+`npm test` verifies the vendored engine archive checksum, compiles TypeScript,
+runs ESLint, and runs the Node tests. `npm run test:extension` compiles and lints,
+then runs Extension Host tests against VS Code 1.110.0 with isolated profiles.
+The current tests exercise real engine results, context and error paths,
+rendering, activation, source snapshots, and panel delivery. They do not drive
+all Quick Pick and Input Box interactions as a human would.
 
-Use F5 to launch the development extension. `npm run compile` builds `out/`;
-`npm run watch` rebuilds while editing. No neighboring engine checkout is
-needed. The engine is the unchanged, checksum-verified 1.0.2 archive stored in
-`vendor/`; its dependencies are locked by `package-lock.json`. See
-[artifact provenance and upgrade procedure](vendor/README.md). The public npm
-package is not assumed to be available. No publishing step is required.
+Use F5 for the development host. The detector dependency is the pinned 1.0.2
+archive in `vendor/`, installed according to `package-lock.json`; the extension
+does not need a neighboring detector checkout. The source checkout documents
+archive provenance and upgrades in `vendor/README.md`.
 
-## Example
+VSIX packaging and a fresh installed-VSIX walkthrough are separate validation
+steps. The `.vscodeignore` configuration excludes sources, tests, scripts, and
+the source archive; packaging must include the installed runtime dependency.
+The extension is not presented as Marketplace-published.
 
-Query A:
-
-```sql
-SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'login'
-```
-
-Query B:
-
-```sql
-SELECT COUNT(*) FROM events WHERE event = 'login'
-```
-
-Expected interpretation:
-
-- Query A counts unique users with login events.
-- Query B counts login event rows.
-- This is high risk because repeated events by the same user can make row counts larger than user counts.
-
-## Architecture
-
-- `semantic-delta-extension` owns the VS Code command and Markdown rendering.
-- `semantic-delta-detector` owns semantic analysis and risk interpretation.
-- The extension does not duplicate detector logic.
-- `src/comparison.ts` loads the public root API and preserves its public result type.
-- `src/report.ts` renders the result without recalculating risk or confidence.
-- `src/reportController.ts` separates validation, operational errors, and result delivery.
-
-## Status
-
-Phase 1 hardens the existing input/example commands and Markdown output. There
-is no editor/file Before/After command, WebView, Git integration, or PostgreSQL
-mode yet. Comparison remains synchronous inside the Extension Host; large
-inputs can block it. Cancellation and full-analysis isolation are not provided.
-
-This is not presented as production-ready or marketplace-published. VSIX
-packaging and installation outside the development environment remain to be
-validated. Existing engine limitations and known domain-specific explanation
-wording remain unchanged; the extension does not replace them with its own
-semantic rules.
+Core detector repository: https://github.com/Ryukanchi/semantic-delta-detector

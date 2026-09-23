@@ -1,4 +1,5 @@
 import type { ComparisonOutcome } from '../comparison';
+import type { ComparisonContextPayload } from '../context/contextTypes';
 
 export type WebviewState =
     | {
@@ -13,4 +14,5 @@ export type WebviewState =
           beforeSql: string;
           afterSql: string;
           outcome: ComparisonOutcome;
+          context?: ComparisonContextPayload;
       };

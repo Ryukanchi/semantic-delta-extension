@@ -1,8 +1,10 @@
 import * as assert from 'node:assert/strict';
+import * as fs from 'node:fs/promises';
+import * as os from 'node:os';
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { executeCompare } from '../../compareController';
-import { isSqlDocument, resolveEditorSnapshot } from '../../documentResolver';
+import { isSqlDocument, resolveEditorSnapshot, resolveFileUriSnapshot } from '../../documentResolver';
 import { presentComparison } from '../../reportController';
 import { ReviewPanel } from '../../reviewPanel';
 import { pickWorkspaceBeforeSql } from '../../workspaceSqlDiscovery';
@@ -64,6 +66,38 @@ suite('Extension Host integration', () => {
         await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
     });
 
+    test('same-named SQL files keep distinct paths and unsaved buffer status in snapshots', async () => {
+        const root = await fs.mkdtemp(path.join(os.tmpdir(), 'semantic-delta-snapshots-'));
+        const beforePath = path.join(root, 'before', 'query.sql');
+        const afterPath = path.join(root, 'after', 'query.sql');
+        try {
+            await fs.mkdir(path.dirname(beforePath), { recursive: true });
+            await fs.mkdir(path.dirname(afterPath), { recursive: true });
+            await fs.writeFile(beforePath, 'SELECT COUNT(*) FROM users');
+            await fs.writeFile(afterPath, 'SELECT COUNT(*) FROM users');
+
+            const before = await resolveFileUriSnapshot(vscode.Uri.file(beforePath));
+            const afterDocument = await vscode.workspace.openTextDocument(vscode.Uri.file(afterPath));
+            const editor = await vscode.window.showTextDocument(afterDocument);
+            const edited = await editor.edit(edit => edit.insert(
+                afterDocument.positionAt(afterDocument.getText().length),
+                ' WHERE active = true',
+            ));
+            assert.equal(edited, true);
+
+            const after = resolveEditorSnapshot(editor);
+            const afterByUri = await resolveFileUriSnapshot(vscode.Uri.file(afterPath));
+            assert.match(before.label, /before[\\/]query\.sql$/);
+            assert.match(after.label, /after[\\/]query\.sql \(unsaved changes\)$/);
+            assert.notEqual(before.label, after.label);
+            assert.equal(after.text, 'SELECT COUNT(*) FROM users WHERE active = true');
+            assert.deepEqual(afterByUri, after);
+        } finally {
+            await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
+            await fs.rm(root, { recursive: true, force: true });
+        }
+    });
+
     test('opens a real engine result in a Markdown editor', async () => {
         let document: vscode.TextDocument | undefined;
         await presentComparison('SELECT COUNT(*) FROM orders',
@@ -99,6 +133,21 @@ suite('Extension Host integration', () => {
             assert.equal(outcome.result.confidence_level, 'low');
         }
 
+        panel.dispose();
+    });
+
+    test('ReviewPanel rejects an older result after a newer comparison starts', () => {
+        const panel = ReviewPanel.createOrShow();
+        const oldId = panel.startComparison('old-before.sql', 'old-after.sql');
+        const currentId = panel.startComparison('current-before.sql', 'current-after.sql');
+        const outcome = { kind: 'operational-error' as const, message: 'Simulated failure' };
+
+        assert.equal(panel.deliverOutcome(
+            oldId, 'old-before.sql', 'old-after.sql', 'SELECT 1', 'SELECT 2', outcome,
+        ), false);
+        assert.equal(panel.deliverOutcome(
+            currentId, 'current-before.sql', 'current-after.sql', 'SELECT 3', 'SELECT 4', outcome,
+        ), true);
         panel.dispose();
     });
 
@@ -224,5 +273,69 @@ suite('Extension Host integration', () => {
 
         assert.equal(result, undefined);
         assert.ok(warningShown.includes('No SQL files found in the current workspace'));
+    });
+
+    test('context collection allows user to choose SQL-only and delivers comparison to ReviewPanel', async () => {
+        const panel = ReviewPanel.createOrShow();
+        const beforeSnapshot = {
+            label: 'events.before.sql',
+            text: "SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'login'",
+        };
+        const afterSnapshot = {
+            label: 'events.after.sql',
+            text: "SELECT COUNT(*) FROM events WHERE event = 'login'",
+        };
+
+        // Simulates SQL-only comparison (no context)
+        const outcome = await executeCompare(beforeSnapshot, afterSnapshot, panel, undefined);
+
+        assert.equal(outcome.kind, 'result');
+        if (outcome.kind === 'result') {
+            assert.ok(outcome.result.evidence_sources.includes('sql_only'));
+            assert.equal(outcome.result.risk_level, 'high');
+        }
+
+        panel.dispose();
+    });
+
+    test('context collection with distinct Before and After metadata delivers contextual analysis', async () => {
+        const panel = ReviewPanel.createOrShow();
+        const beforeSnapshot = {
+            label: 'events.before.sql',
+            text: "SELECT COUNT(DISTINCT user_id) FROM events WHERE event = 'login'",
+        };
+        const afterSnapshot = {
+            label: 'events.after.sql',
+            text: "SELECT COUNT(*) FROM events WHERE event = 'login'",
+        };
+
+        const context = {
+            before: {
+                metric_name: 'active_users',
+                team_context: 'finance',
+                intended_use: 'revenue reporting',
+            },
+            after: {
+                metric_name: 'active_users',
+                team_context: 'product analytics',
+                intended_use: 'feature adoption',
+            },
+        };
+
+        const outcome = await executeCompare(beforeSnapshot, afterSnapshot, panel, context);
+
+        assert.equal(outcome.kind, 'result');
+        if (outcome.kind === 'result') {
+            assert.equal(outcome.result.metric_name_a, 'active_users');
+            assert.equal(outcome.result.metric_name_b, 'active_users');
+            assert.ok(outcome.result.evidence_sources.includes('sql'));
+            assert.ok(outcome.result.evidence_sources.includes('metric_name'));
+            assert.ok(outcome.result.evidence_sources.includes('team_context'));
+            assert.ok(outcome.result.evidence_sources.includes('intended_use'));
+            assert.ok(outcome.result.detected_differences.some(d => d.category === 'team_context_mismatch'));
+            assert.ok(outcome.result.detected_differences.some(d => d.category === 'intended_use_mismatch'));
+        }
+
+        panel.dispose();
     });
 });

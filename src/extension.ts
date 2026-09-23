@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { validateQuery } from './comparison';
 import { executeCompare } from './compareController';
+import { collectComparisonContext } from './context/contextDialog';
 import { isSqlDocument, resolveEditorSnapshot, resolveFileUriSnapshot } from './documentResolver';
 import { presentComparison } from './reportController';
 import { ReviewPanel } from './reviewPanel';
@@ -54,6 +55,19 @@ async function compareSql(): Promise<void> {
 		return;
 	}
 
+	const beforeLabel = vscode.workspace.asRelativePath(beforeUri, true);
+	const afterLabel = activeEditor.document.isUntitled
+		? activeEditor.document.fileName
+		: vscode.workspace.asRelativePath(activeEditor.document.uri, true);
+
+	const contextPayload = await collectComparisonContext({
+		beforeLabel,
+		afterLabel,
+	});
+	if (contextPayload === null) {
+		return;
+	}
+
 	const afterSnapshot = resolveEditorSnapshot(activeEditor);
 
 	let beforeSnapshot;
@@ -66,7 +80,7 @@ async function compareSql(): Promise<void> {
 	}
 
 	const panel = ReviewPanel.createOrShow();
-	await executeCompare(beforeSnapshot, afterSnapshot, panel);
+	await executeCompare(beforeSnapshot, afterSnapshot, panel, contextPayload);
 }
 
 async function openMarkdownReport(report: string): Promise<void> {

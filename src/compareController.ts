@@ -1,4 +1,5 @@
 import { compareQueries, type ComparisonOutcome, type EngineLoader } from './comparison';
+import { normalizeComparisonContext, type ComparisonContextPayload } from './context/contextTypes';
 
 export interface DocumentSnapshot {
     label: string;
@@ -14,6 +15,7 @@ export interface ReviewView {
         beforeSql: string,
         afterSql: string,
         outcome: ComparisonOutcome,
+        context?: ComparisonContextPayload,
     ): boolean;
 }
 
@@ -21,10 +23,16 @@ export async function executeCompare(
     beforeSnapshot: DocumentSnapshot,
     afterSnapshot: DocumentSnapshot,
     view: ReviewView,
+    contextOrLoader?: ComparisonContextPayload | EngineLoader,
     loadEngine?: EngineLoader,
 ): Promise<ComparisonOutcome> {
+    const context = normalizeComparisonContext(
+        typeof contextOrLoader === 'function' ? undefined : contextOrLoader,
+    );
+    const loader = typeof contextOrLoader === 'function' ? contextOrLoader : loadEngine;
+
     const requestId = view.startComparison(beforeSnapshot.label, afterSnapshot.label);
-    const outcome = await compareQueries(beforeSnapshot.text, afterSnapshot.text, loadEngine);
+    const outcome = await compareQueries(beforeSnapshot.text, afterSnapshot.text, context, loader);
     view.deliverOutcome(
         requestId,
         beforeSnapshot.label,
@@ -32,6 +40,7 @@ export async function executeCompare(
         beforeSnapshot.text,
         afterSnapshot.text,
         outcome,
+        context,
     );
     return outcome;
 }

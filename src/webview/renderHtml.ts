@@ -1,4 +1,5 @@
 import type { DetectedDifference, SemanticComparisonResult } from 'semantic-delta-detector' with { 'resolution-mode': 'import' };
+import { normalizeComparisonContext, type ComparisonContextPayload, type SupportedContextFields } from '../context/contextTypes';
 import type { WebviewState } from './types';
 
 export function escapeHtml(value: string): string {
@@ -95,6 +96,39 @@ function renderLimitations(limitations?: string[]): string {
     `;
 }
 
+function renderContextFields(fields?: SupportedContextFields): string {
+    if (!fields) {
+        return '<p class="meaning-text">No additional context supplied for this query.</p>';
+    }
+
+    const values: Array<[string, string | undefined]> = [
+        ['Metric name', fields.metric_name],
+        ['Description', fields.description],
+        ['Team context', fields.team_context],
+        ['Intended use', fields.intended_use],
+    ];
+    return `<dl class="context-fields">${values
+        .filter(([, value]) => value !== undefined)
+        .map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value ?? '')}</dd>`)
+        .join('')}</dl>`;
+}
+
+function renderComparisonContext(context?: ComparisonContextPayload): string {
+    const supplied = normalizeComparisonContext(context);
+    return `
+        <div class="section">
+            <h2 class="section-title">Supplied Comparison Context</h2>
+            <p class="context-note">${supplied
+                ? 'These values were supplied for this comparison and were not independently verified.'
+                : 'No additional business context was supplied (SQL only).'}</p>
+            ${supplied ? `<div class="meaning-grid">
+                <div class="meaning-box"><span class="meaning-label">Before</span>${renderContextFields(supplied.before)}</div>
+                <div class="meaning-box"><span class="meaning-label">After</span>${renderContextFields(supplied.after)}</div>
+            </div>` : ''}
+        </div>
+    `;
+}
+
 function renderSemanticResult(result: SemanticComparisonResult, beforeLabel: string, afterLabel: string, beforeSql: string, afterSql: string): string {
     const riskTone = result.risk_level === 'high' ? 'red' : result.risk_level === 'medium' ? 'amber' : 'petrol';
     const confTone = result.confidence_level === 'high' ? 'petrol' : 'amber';
@@ -104,9 +138,16 @@ function renderSemanticResult(result: SemanticComparisonResult, beforeLabel: str
             ${renderBadge('Risk', result.risk_level.toUpperCase(), riskTone)}
             ${renderBadge('Confidence', result.confidence_level.toUpperCase(), confTone)}
             <span class="badge badge-neutral"><span class="badge-label">Similarity:</span> ${result.semantic_similarity_score}/100</span>
+            ${result.evidence_sources && result.evidence_sources.length > 0 ? `<span class="badge badge-neutral"><span class="badge-label">Evidence sources:</span> ${escapeHtml(result.evidence_sources.join(', '))}</span>` : ''}
         </div>
+        <p class="context-note">Similarity is a heuristic score, not confidence or proof of equivalence.</p>
 
         ${renderLimitations(result.parser_limitations)}
+
+        ${result.verdict ? `<div class="section">
+            <h2 class="section-title">Verdict</h2>
+            <p class="section-body">${escapeHtml(result.verdict)}</p>
+        </div>` : ''}
 
         ${renderFindings(result.detected_differences)}
 
@@ -128,6 +169,17 @@ function renderSemanticResult(result: SemanticComparisonResult, beforeLabel: str
                 </div>
             </div>
         </div>
+
+        ${result.impact ? `<div class="section">
+            <h2 class="section-title">Business Impact</h2>
+            <div class="card">
+                <p><strong>Severity:</strong> ${escapeHtml(result.impact.severity)}</p>
+                <p><strong>Decision risk:</strong> ${escapeHtml(result.impact.decisionRisk)}</p>
+                <p><strong>Affected meaning:</strong> ${escapeHtml(result.impact.affectedMeaning)}</p>
+                ${result.impact.evidence.length > 0 ? `<h3>Impact evidence</h3><ul>${result.impact.evidence
+                    .map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : ''}
+            </div>
+        </div>` : ''}
 
         <div class="section">
             <h2 class="section-title">Recommendation</h2>
@@ -518,6 +570,27 @@ export function renderHtml(state: WebviewState): string {
             font-size: 13px;
         }
 
+        .context-note {
+            color: var(--sd-text-muted);
+            font-size: 12px;
+            margin: 0 0 16px 0;
+        }
+
+        .context-fields {
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .context-fields dt {
+            font-weight: 600;
+            color: var(--sd-text-muted);
+            font-size: 12px;
+        }
+
+        .context-fields dd {
+            margin: 0 0 10px 0;
+        }
+
         .action-box {
             margin-top: 10px;
             background-color: var(--sd-card);
@@ -653,6 +726,7 @@ export function renderHtml(state: WebviewState): string {
 
         <main id="main-content">
             ${renderContent(state)}
+            ${state.kind === 'comparison' ? renderComparisonContext(state.context) : ''}
         </main>
 
         <footer class="app-footer">

@@ -2,6 +2,7 @@ import * as assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { ComparisonOutcome, EngineLoader } from '../comparison';
 import { executeCompare, type DocumentSnapshot } from '../compareController';
+import type { ComparisonContextPayload } from '../context/contextTypes';
 import type { ReviewView } from '../reviewPanel';
 
 class MockReviewView implements ReviewView {
@@ -14,6 +15,7 @@ class MockReviewView implements ReviewView {
         beforeSql: string;
         afterSql: string;
         outcome: ComparisonOutcome;
+        context?: ComparisonContextPayload;
     }> = [];
 
     public startComparison(beforeLabel: string, afterLabel: string): number {
@@ -29,6 +31,7 @@ class MockReviewView implements ReviewView {
         beforeSql: string,
         afterSql: string,
         outcome: ComparisonOutcome,
+        context?: ComparisonContextPayload,
     ): boolean {
         if (requestId !== this.currentRequestId) {
             return false;
@@ -40,6 +43,7 @@ class MockReviewView implements ReviewView {
             beforeSql,
             afterSql,
             outcome,
+            context,
         });
         return true;
     }
@@ -211,4 +215,68 @@ test('stale result from older comparison is discarded when newer comparison has 
     assert.equal(view.deliveredCalls.length, 1);
     assert.equal(view.deliveredCalls[0].requestId, 2);
     assert.equal(view.deliveredCalls[0].beforeLabel, 'file2.before.sql');
+});
+
+test('executeCompare passes context payload through to engine and delivers result', async () => {
+    const view = new MockReviewView();
+    const beforeSnapshot: DocumentSnapshot = {
+        label: 'before.sql',
+        text: "SELECT COUNT(DISTINCT user_id) FROM users",
+    };
+    const afterSnapshot: DocumentSnapshot = {
+        label: 'after.sql',
+        text: "SELECT COUNT(*) FROM events WHERE event = 'login'",
+    };
+    const context = {
+        before: {
+            metric_name: 'login_users',
+            team_context: 'product analytics',
+        },
+        after: {
+            metric_name: 'login_users',
+            team_context: 'product analytics',
+        },
+    };
+
+    const outcome = await executeCompare(beforeSnapshot, afterSnapshot, view, context);
+
+    assert.equal(outcome.kind, 'result');
+    assert.equal(view.deliveredCalls.length, 1);
+    const delivered = view.deliveredCalls[0];
+    assert.equal(delivered.beforeLabel, 'before.sql');
+    assert.equal(delivered.afterLabel, 'after.sql');
+    assert.equal(delivered.beforeSql, beforeSnapshot.text);
+    assert.equal(delivered.afterSql, afterSnapshot.text);
+    assert.deepEqual(delivered.context, context);
+    if (delivered.outcome.kind === 'result') {
+        assert.equal(delivered.outcome.result.metric_name_a, 'login_users');
+        assert.equal(delivered.outcome.result.metric_name_b, 'login_users');
+        assert.ok(delivered.outcome.result.evidence_sources.includes('metric_name'));
+        assert.ok(delivered.outcome.result.evidence_sources.includes('team_context'));
+    }
+});
+
+test('executeCompare preserves unsaved active buffer when context is supplied', async () => {
+    const view = new MockReviewView();
+    const beforeSnapshot: DocumentSnapshot = {
+        label: 'query.sql',
+        text: 'SELECT COUNT(*) FROM users WHERE is_paid AND is_active',
+    };
+    const unsavedAfterSnapshot: DocumentSnapshot = {
+        label: 'query.sql (unsaved)',
+        text: 'SELECT COUNT(*) FROM users WHERE is_paid OR is_active',
+    };
+    const context = {
+        before: { team_context: 'finance' },
+        after: { team_context: 'finance' },
+    };
+
+    const outcome = await executeCompare(beforeSnapshot, unsavedAfterSnapshot, view, context);
+
+    assert.equal(outcome.kind, 'result');
+    assert.equal(view.deliveredCalls.length, 1);
+    assert.equal(view.deliveredCalls[0].afterSql, unsavedAfterSnapshot.text);
+    if (outcome.kind === 'result') {
+        assert.ok(outcome.result.detected_differences.some(d => d.category === 'filter_logic_mismatch'));
+    }
 });

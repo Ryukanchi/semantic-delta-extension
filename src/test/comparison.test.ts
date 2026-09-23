@@ -180,3 +180,157 @@ test('engine-derived HTML and Markdown links remain report text', async () => {
     assert.ok(report.includes('&lt;script&gt;'));
     assert.ok(report.includes('\\[open\\](command:example)'));
 });
+
+test('compareQueries with no context calls compareSqlQueries and preserves SQL-only behavior', async () => {
+    let sqlQueriesCalled = false;
+    let metricDefsCalled = false;
+    const mockResult = await resultFor();
+
+    const loader: EngineLoader = async () => ({
+        compareSqlQueries: (a, b) => {
+            sqlQueriesCalled = true;
+            assert.equal(a, before);
+            assert.equal(b, after);
+            return mockResult;
+        },
+        compareMetricDefinitions: () => {
+            metricDefsCalled = true;
+            return mockResult;
+        },
+    });
+
+    const outcome = await compareQueries(before, after, undefined, loader);
+    assert.equal(outcome.kind, 'result');
+    assert.equal(sqlQueriesCalled, true);
+    assert.equal(metricDefsCalled, false);
+});
+
+test('compareQueries with context calls compareMetricDefinitions with exact supported metadata', async () => {
+    let metricDefsCalled = false;
+    let passedInputA: unknown;
+    let passedInputB: unknown;
+    const mockResult = await resultFor();
+
+    const loader: EngineLoader = async () => ({
+        compareMetricDefinitions: (inputA, inputB) => {
+            metricDefsCalled = true;
+            passedInputA = inputA;
+            passedInputB = inputB;
+            return mockResult;
+        },
+    });
+
+    const context = {
+        before: {
+            metric_name: 'orders_count',
+            description: 'All orders',
+            team_context: 'finance',
+            intended_use: 'kpi',
+        },
+        after: {
+            metric_name: 'unique_orders_count',
+            team_context: 'product',
+        },
+    };
+
+    const outcome = await compareQueries(before, after, context, loader);
+    assert.equal(outcome.kind, 'result');
+    assert.equal(metricDefsCalled, true);
+    assert.deepEqual(passedInputA, {
+        query: before,
+        metric_name: 'orders_count',
+        description: 'All orders',
+        team_context: 'finance',
+        intended_use: 'kpi',
+    });
+    assert.deepEqual(passedInputB, {
+        query: after,
+        metric_name: 'unique_orders_count',
+        team_context: 'product',
+    });
+});
+
+test('compareQueries does not pass unsupported metadata fields to compareMetricDefinitions', async () => {
+    let passedInputA: Record<string, unknown> = {};
+    const mockResult = await resultFor();
+
+    const loader: EngineLoader = async () => ({
+        compareMetricDefinitions: (inputA) => {
+            passedInputA = inputA as unknown as Record<string, unknown>;
+            return mockResult;
+        },
+    });
+
+    const contextWithExtra = {
+        before: {
+            metric_name: 'login_users',
+            extra_field: 'unsupported',
+            owner: 'team lead',
+            source_domain: 'auth',
+        } as unknown as { metric_name: string },
+    };
+
+    const outcome = await compareQueries(before, after, contextWithExtra, loader);
+    assert.equal(outcome.kind, 'result');
+    assert.equal(passedInputA.metric_name, 'login_users');
+    assert.equal(passedInputA.extra_field, undefined);
+    assert.equal(passedInputA.owner, undefined);
+    assert.equal(passedInputA.source_domain, undefined);
+});
+
+test('real engine detects naming_alignment_mismatch and increases confidence to high when metadata is supplied', async () => {
+    // Query A is population (users), Query B is engagement (events with login).
+    // They have different primary dimensions, which triggers naming_alignment_mismatch and hasMeaningfulSqlDifference.
+    const queryA = "SELECT COUNT(DISTINCT user_id) FROM users";
+    const queryB = "SELECT COUNT(*) FROM events WHERE event = 'login'";
+
+    const context = {
+        before: {
+            metric_name: 'active_users',
+            team_context: 'product analytics',
+            intended_use: 'user activity monitoring',
+        },
+        after: {
+            metric_name: 'active_users',
+            team_context: 'product analytics',
+            intended_use: 'user activity monitoring',
+        },
+    };
+
+    const outcome = await compareQueries(queryA, queryB, context);
+    assert.equal(outcome.kind, 'result');
+    if (outcome.kind !== 'result') {
+        throw new Error('Expected result');
+    }
+
+    const result = outcome.result;
+    assert.equal(result.metric_name_a, 'active_users');
+    assert.equal(result.metric_name_b, 'active_users');
+    assert.equal(result.confidence_level, 'high');
+    assert.ok(result.evidence_sources.includes('sql'));
+    assert.ok(result.evidence_sources.includes('metric_name'));
+    assert.ok(result.evidence_sources.includes('team_context'));
+    assert.ok(result.evidence_sources.includes('intended_use'));
+    assert.ok(!result.evidence_sources.includes('sql_only'));
+    assert.ok(result.detected_differences.some(d => d.category === 'naming_alignment_mismatch'));
+});
+
+test('real engine detects team_context_mismatch when team contexts differ between Before and After', async () => {
+    const context = {
+        before: {
+            team_context: 'finance',
+        },
+        after: {
+            team_context: 'product',
+        },
+    };
+
+    const outcome = await compareQueries(before, after, context);
+    assert.equal(outcome.kind, 'result');
+    if (outcome.kind !== 'result') {
+        throw new Error('Expected result');
+    }
+
+    assert.ok(outcome.result.detected_differences.some(d => d.category === 'team_context_mismatch'));
+    assert.ok(outcome.result.evidence_sources.includes('team_context'));
+});

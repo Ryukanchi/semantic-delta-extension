@@ -41,6 +41,7 @@ test('renderHtml renders normal semantic result with findings and SQL snapshots'
 
     assert.ok(html.includes('Risk:</span> <span class="badge-value">HIGH</span>'));
     assert.ok(html.includes('Confidence:</span> <span class="badge-value">MEDIUM</span>'));
+    assert.ok(html.includes('Evidence sources:</span> sql_only'));
     assert.ok(html.includes('85/100'));
     assert.ok(html.includes('aggregation_mismatch'));
     assert.ok(html.includes('Finding 1'));
@@ -54,6 +55,95 @@ test('renderHtml renders normal semantic result with findings and SQL snapshots'
     assert.ok(html.includes('orders.before.sql'));
     assert.ok(html.includes('orders.after.sql'));
     assert.ok(html.includes('Static analysis only. SQL is never executed.'));
+});
+
+test('renderHtml renders contextual evidence sources badge when context was used', () => {
+    const contextualResult: SemanticComparisonResult = {
+        ...mockResult,
+        evidence_sources: ['sql', 'metric_name', 'team_context', 'intended_use'],
+    };
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'orders.before.sql',
+        afterLabel: 'orders.after.sql',
+        beforeSql: 'SELECT 1',
+        afterSql: 'SELECT 2',
+        outcome: {
+            kind: 'result',
+            result: contextualResult,
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('Evidence sources:</span> sql, metric_name, team_context, intended_use'));
+});
+
+test('renderHtml shows every supplied verdict and impact field without inventing absent values', () => {
+    const richResult: SemanticComparisonResult = {
+        ...mockResult,
+        verdict: 'HIGH RISK: Metric meaning changed.',
+        impact: {
+            severity: 'HIGH',
+            decisionRisk: 'Revenue decisions may change.',
+            affectedMeaning: 'Before includes all orders; After includes matched orders.',
+            recommendedAction: 'Review customer matching before release.',
+            evidence: ['LEFT JOIN became INNER JOIN.'],
+        },
+    };
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'models/a/query.sql',
+        afterLabel: 'models/b/query.sql (unsaved changes)',
+        beforeSql: 'SELECT 1',
+        afterSql: 'SELECT 2',
+        outcome: { kind: 'result', result: richResult },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('HIGH RISK: Metric meaning changed.'));
+    assert.ok(html.includes('Business Impact'));
+    assert.ok(html.includes('Severity:</strong> HIGH'));
+    assert.ok(html.includes('Revenue decisions may change.'));
+    assert.ok(html.includes('Before includes all orders; After includes matched orders.'));
+    assert.ok(html.includes('LEFT JOIN became INNER JOIN.'));
+    assert.ok(html.includes('Review customer matching before release.'));
+    assert.ok(html.includes('models/a/query.sql'));
+    assert.ok(html.includes('models/b/query.sql (unsaved changes)'));
+    assert.ok(html.includes('Similarity is a heuristic score'));
+
+    const withoutOptionalFields = renderHtml({
+        ...state,
+        outcome: { kind: 'result', result: mockResult },
+    });
+    assert.ok(!withoutOptionalFields.includes('Business Impact'));
+    assert.ok(!withoutOptionalFields.includes('Metric meaning changed.'));
+});
+
+test('renderHtml shows exact normalized context for both sides and escapes it', () => {
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'models/a/query.sql',
+        afterLabel: 'models/b/query.sql',
+        beforeSql: 'SELECT 1',
+        afterSql: 'SELECT 2',
+        outcome: { kind: 'result', result: mockResult },
+        context: {
+            before: { metric_name: '  revenue  ', description: '<img src=x onerror=alert(1)>' },
+            after: { intended_use: 'Executive reporting', team_context: 'finance' },
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('Supplied Comparison Context'));
+    assert.ok(html.includes('Metric name</dt><dd>revenue'));
+    assert.ok(html.includes('Intended use</dt><dd>Executive reporting'));
+    assert.ok(html.includes('Team context</dt><dd>finance'));
+    assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
+    assert.ok(!html.includes('<img src=x onerror=alert(1)>'));
+    assert.ok(html.includes('not independently verified'));
+
+    const sqlOnly = renderHtml({ ...state, context: undefined });
+    assert.ok(sqlOnly.includes('No additional business context was supplied (SQL only).'));
 });
 
 test('renderHtml renders limitations banner when parser limitations are present', () => {
