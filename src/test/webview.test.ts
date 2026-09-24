@@ -1,7 +1,7 @@
 import * as assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { SemanticComparisonResult } from 'semantic-delta-detector' with { 'resolution-mode': 'import' };
-import { escapeHtml, formatDecisionRisk, renderHtml } from '../webview/renderHtml';
+import { escapeHtml, formatDecisionRisk, renderHtml, renderReviewNav } from '../webview/renderHtml';
 import type { WebviewState } from '../webview/types';
 
 const mockResult: SemanticComparisonResult = {
@@ -396,4 +396,139 @@ test('renderHtml preserves SQL Snapshots alongside SQL Diff', () => {
     assert.ok(html.includes('SQL Snapshots'));
     assert.ok(html.includes('Before SQL'));
     assert.ok(html.includes('After SQL'));
+});
+
+test('renderReviewNav returns empty string for empty item list', () => {
+    assert.equal(renderReviewNav([]), '');
+});
+
+test('renderHtml renders review navigation with default sections for SQL-only comparison without impact', () => {
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'a.sql',
+        afterLabel: 'b.sql',
+        beforeSql: 'SELECT 1;',
+        afterSql: 'SELECT 2;',
+        outcome: {
+            kind: 'result',
+            result: mockResult,
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('<nav class="review-nav" aria-label="Review Navigation">'));
+    assert.ok(html.includes('href="#summary"'));
+    assert.ok(html.includes('href="#findings"'));
+    assert.ok(html.includes('href="#sql-diff"'));
+    assert.ok(html.includes('href="#sql-snapshots"'));
+    assert.ok(!html.includes('href="#business-impact"'));
+    assert.ok(!html.includes('href="#comparison-context"'));
+
+    // Verify corresponding target IDs exist in the rendered HTML
+    assert.ok(html.includes('id="summary"'));
+    assert.ok(html.includes('id="findings"'));
+    assert.ok(html.includes('id="sql-diff"'));
+    assert.ok(html.includes('id="sql-snapshots"'));
+});
+
+test('renderHtml includes Impact link when impact is present and Context link when context is supplied', () => {
+    const richResult: SemanticComparisonResult = {
+        ...mockResult,
+        impact: {
+            severity: 'HIGH',
+            decisionRisk: 'High risk change.',
+            affectedMeaning: 'Meaning changed.',
+            recommendedAction: 'Verify.',
+            evidence: ['join changed'],
+        },
+    };
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'a.sql',
+        afterLabel: 'b.sql',
+        beforeSql: 'SELECT 1;',
+        afterSql: 'SELECT 2;',
+        context: {
+            before: { metric_name: 'orders_total' },
+            after: { metric_name: 'orders_filtered' },
+        },
+        outcome: {
+            kind: 'result',
+            result: richResult,
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('href="#business-impact"'));
+    assert.ok(html.includes('id="business-impact"'));
+    assert.ok(html.includes('href="#comparison-context"'));
+    assert.ok(html.includes('id="comparison-context"'));
+});
+
+test('renderHtml includes findings target ID even when no differences are detected', () => {
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'a.sql',
+        afterLabel: 'b.sql',
+        beforeSql: 'SELECT 1;',
+        afterSql: 'SELECT 1;',
+        outcome: {
+            kind: 'result',
+            result: {
+                ...mockResult,
+                detected_differences: [],
+            },
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('href="#findings"'));
+    assert.ok(html.includes('id="findings"'));
+    assert.ok(html.includes('card card-no-findings'));
+});
+
+test('renderHtml renders operational error navigation pointing to error, diff, and snapshots', () => {
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'a.sql',
+        afterLabel: 'b.sql',
+        beforeSql: 'SELECT 1;',
+        afterSql: 'SELECT 2;',
+        outcome: {
+            kind: 'operational-error',
+            message: 'Engine parser crashed',
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('<nav class="review-nav" aria-label="Review Navigation">'));
+    assert.ok(html.includes('href="#operational-error"'));
+    assert.ok(html.includes('id="operational-error"'));
+    assert.ok(html.includes('href="#sql-diff"'));
+    assert.ok(html.includes('id="sql-diff"'));
+    assert.ok(html.includes('href="#sql-snapshots"'));
+    assert.ok(html.includes('id="sql-snapshots"'));
+
+    // Must not include semantic result anchors
+    assert.ok(!html.includes('href="#summary"'));
+    assert.ok(!html.includes('href="#findings"'));
+    assert.ok(!html.includes('href="#business-impact"'));
+    assert.ok(!html.includes('href="#comparison-context"'));
+});
+
+test('renderHtml does not render navigation for validation errors', () => {
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'a.sql',
+        afterLabel: 'b.sql',
+        beforeSql: '',
+        afterSql: 'SELECT 2;',
+        outcome: {
+            kind: 'validation-error',
+            message: 'Before SQL is empty',
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(!html.includes('class="review-nav"'));
 });

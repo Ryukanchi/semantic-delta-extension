@@ -29,6 +29,29 @@ export function formatDecisionRisk(decisionRisk: string): string {
     return decisionRisk.replace(/^Decision risk:\s*/i, '');
 }
 
+export interface ReviewNavItem {
+    id: string;
+    label: string;
+}
+
+export function renderReviewNav(items: ReviewNavItem[]): string {
+    if (items.length === 0) {
+        return '';
+    }
+    const links = items
+        .map(item => `<a href="#${escapeHtml(item.id)}" class="review-nav-link">${escapeHtml(item.label)}</a>`)
+        .join('');
+
+    return `
+        <nav class="review-nav" aria-label="Review Navigation">
+            <span class="review-nav-label">Jump to:</span>
+            <div class="review-nav-links">
+                ${links}
+            </div>
+        </nav>
+    `;
+}
+
 function renderSqlBlock(title: string, label: string, sql: string): string {
     return `
         <div class="sql-box">
@@ -44,7 +67,7 @@ function renderSqlBlock(title: string, label: string, sql: string): string {
 function renderFindings(differences: DetectedDifference[]): string {
     if (differences.length === 0) {
         return `
-            <div class="card card-no-findings">
+            <div id="findings" class="card card-no-findings">
                 <div class="card-header-line">
                     <span class="badge badge-amber">NO MODELED DIFFERENCES DETECTED</span>
                 </div>
@@ -69,7 +92,7 @@ function renderFindings(differences: DetectedDifference[]): string {
     `).join('\n');
 
     return `
-        <div class="section">
+        <div id="findings" class="section">
             <h2 class="section-title">Findings (${differences.length})</h2>
             <div class="findings-list">
                 ${items}
@@ -121,7 +144,7 @@ function renderContextFields(fields?: SupportedContextFields): string {
 function renderComparisonContext(context?: ComparisonContextPayload): string {
     const supplied = normalizeComparisonContext(context);
     return `
-        <div class="section">
+        <div id="comparison-context" class="section">
             <h2 class="section-title">Supplied Comparison Context</h2>
             <p class="context-note">${supplied
                 ? 'These values were supplied for this comparison and were not independently verified.'
@@ -178,18 +201,42 @@ function renderSqlDiff(beforeLabel: string, afterLabel: string, beforeSql: strin
     `;
 }
 
-function renderSemanticResult(result: SemanticComparisonResult, beforeLabel: string, afterLabel: string, beforeSql: string, afterSql: string): string {
+function renderSemanticResult(
+    result: SemanticComparisonResult,
+    beforeLabel: string,
+    afterLabel: string,
+    beforeSql: string,
+    afterSql: string,
+    context?: ComparisonContextPayload,
+): string {
     const riskTone = result.risk_level === 'high' ? 'red' : result.risk_level === 'medium' ? 'amber' : 'petrol';
     const confTone = result.confidence_level === 'high' ? 'petrol' : 'amber';
 
+    const navItems: ReviewNavItem[] = [
+        { id: 'summary', label: 'Summary' },
+        { id: 'findings', label: 'Findings' },
+    ];
+    if (result.impact) {
+        navItems.push({ id: 'business-impact', label: 'Impact' });
+    }
+    navItems.push({ id: 'sql-diff', label: 'SQL Diff' });
+    navItems.push({ id: 'sql-snapshots', label: 'Snapshots' });
+    if (normalizeComparisonContext(context)) {
+        navItems.push({ id: 'comparison-context', label: 'Context' });
+    }
+
     return `
-        <div class="header-badges">
-            ${renderBadge('Risk', result.risk_level.toUpperCase(), riskTone)}
-            ${renderBadge('Confidence', result.confidence_level.toUpperCase(), confTone)}
-            <span class="badge badge-neutral"><span class="badge-label">Similarity:</span> ${result.semantic_similarity_score}/100</span>
-            ${result.evidence_sources && result.evidence_sources.length > 0 ? `<span class="badge badge-neutral"><span class="badge-label">Evidence sources:</span> ${escapeHtml(result.evidence_sources.join(', '))}</span>` : ''}
-        </div>
-        <p class="context-note">Similarity is a heuristic score, not confidence or proof of equivalence.</p>
+        ${renderReviewNav(navItems)}
+
+        <section id="summary" class="section-summary">
+            <div class="header-badges">
+                ${renderBadge('Risk', result.risk_level.toUpperCase(), riskTone)}
+                ${renderBadge('Confidence', result.confidence_level.toUpperCase(), confTone)}
+                <span class="badge badge-neutral"><span class="badge-label">Similarity:</span> ${result.semantic_similarity_score}/100</span>
+                ${result.evidence_sources && result.evidence_sources.length > 0 ? `<span class="badge badge-neutral"><span class="badge-label">Evidence sources:</span> ${escapeHtml(result.evidence_sources.join(', '))}</span>` : ''}
+            </div>
+            <p class="context-note">Similarity is a heuristic score, not confidence or proof of equivalence.</p>
+        </section>
 
         ${renderLimitations(result.parser_limitations)}
 
@@ -219,7 +266,7 @@ function renderSemanticResult(result: SemanticComparisonResult, beforeLabel: str
             </div>
         </div>
 
-        ${result.impact ? `<div class="section">
+        ${result.impact ? `<div id="business-impact" class="section">
             <h2 class="section-title">Business Impact</h2>
             <div class="card">
                 <p><strong>Severity:</strong> ${escapeHtml(result.impact.severity)}</p>
@@ -241,12 +288,12 @@ function renderSemanticResult(result: SemanticComparisonResult, beforeLabel: str
             ` : ''}
         </div>
 
-        <div class="section">
+        <div id="sql-diff" class="section">
             <h2 class="section-title">SQL Diff</h2>
             ${renderSqlDiff(beforeLabel, afterLabel, beforeSql, afterSql)}
         </div>
 
-        <div class="section">
+        <div id="sql-snapshots" class="section">
             <h2 class="section-title">SQL Snapshots</h2>
             <div class="sql-grid">
                 ${renderSqlBlock('Before SQL', beforeLabel, beforeSql)}
@@ -268,7 +315,7 @@ function renderContent(state: WebviewState): string {
         `;
     }
 
-    const { beforeLabel, afterLabel, beforeSql, afterSql, outcome } = state;
+    const { beforeLabel, afterLabel, beforeSql, afterSql, outcome, context } = state;
 
     if (outcome.kind === 'validation-error') {
         return `
@@ -295,25 +342,35 @@ function renderContent(state: WebviewState): string {
     }
 
     if (outcome.kind === 'operational-error') {
+        const navItems: ReviewNavItem[] = [
+            { id: 'operational-error', label: 'Error' },
+            { id: 'sql-diff', label: 'SQL Diff' },
+            { id: 'sql-snapshots', label: 'Snapshots' },
+        ];
+
         return `
-            <div class="header-badges">
-                ${renderBadge('Risk', 'Not assessed', 'neutral')}
-                ${renderBadge('Confidence', 'Not assessed', 'neutral')}
-                <span class="badge badge-red">OPERATIONAL ERROR</span>
+            ${renderReviewNav(navItems)}
+
+            <div id="operational-error">
+                <div class="header-badges">
+                    ${renderBadge('Risk', 'Not assessed', 'neutral')}
+                    ${renderBadge('Confidence', 'Not assessed', 'neutral')}
+                    <span class="badge badge-red">OPERATIONAL ERROR</span>
+                </div>
+
+                <div class="card card-operational-error">
+                    <h2 class="error-title">Operational Analysis Error</h2>
+                    <p class="error-message">${escapeHtml(outcome.message)}</p>
+                    <p class="error-note">Static analysis failed without producing a result. Risk and confidence are not assessed.</p>
+                </div>
             </div>
 
-            <div class="card card-operational-error">
-                <h2 class="error-title">Operational Analysis Error</h2>
-                <p class="error-message">${escapeHtml(outcome.message)}</p>
-                <p class="error-note">Static analysis failed without producing a result. Risk and confidence are not assessed.</p>
-            </div>
-
-            <div class="section">
+            <div id="sql-diff" class="section">
                 <h2 class="section-title">SQL Diff</h2>
                 ${renderSqlDiff(beforeLabel, afterLabel, beforeSql, afterSql)}
             </div>
 
-            <div class="section">
+            <div id="sql-snapshots" class="section">
                 <h2 class="section-title">Submitted SQL Snapshots</h2>
                 <div class="sql-grid">
                     ${renderSqlBlock('Before SQL', beforeLabel, beforeSql)}
@@ -323,7 +380,7 @@ function renderContent(state: WebviewState): string {
         `;
     }
 
-    return renderSemanticResult(outcome.result, beforeLabel, afterLabel, beforeSql, afterSql);
+    return renderSemanticResult(outcome.result, beforeLabel, afterLabel, beforeSql, afterSql, context);
 }
 
 export function renderHtml(state: WebviewState): string {
@@ -361,6 +418,10 @@ export function renderHtml(state: WebviewState): string {
             --sd-font-mono: "IBM Plex Mono", Menlo, Monaco, Consolas, "Courier New", monospace;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
             padding: 24px;
@@ -375,6 +436,64 @@ export function renderHtml(state: WebviewState): string {
         .container {
             max-width: 1100px;
             margin: 0 auto;
+        }
+
+        .section,
+        .card,
+        .section-summary,
+        #operational-error {
+            scroll-margin-top: 16px;
+        }
+
+        .review-nav {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            margin-bottom: 20px;
+            padding: 8px 12px;
+            background-color: var(--sd-card);
+            border: 1px solid var(--sd-border);
+            border-radius: 6px;
+        }
+
+        .review-nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--sd-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            user-select: none;
+        }
+
+        .review-nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .review-nav-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--sd-petrol);
+            background-color: var(--sd-petrol-tint);
+            border: 1px solid #C2DFD7;
+            text-decoration: none;
+            line-height: 1.3;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .review-nav-link:hover,
+        .review-nav-link:focus {
+            background-color: #D6ECE5;
+            border-color: var(--sd-petrol);
+            text-decoration: none;
+            outline: none;
         }
 
         .app-header {

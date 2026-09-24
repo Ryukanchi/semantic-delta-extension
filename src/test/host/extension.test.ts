@@ -134,6 +134,9 @@ suite('Extension Host integration', () => {
         }
 
         const webviewHtml = (panel as unknown as { panel: vscode.WebviewPanel }).panel.webview.html;
+        assert.ok(webviewHtml.includes('Review Navigation'));
+        assert.ok(webviewHtml.includes('href="#findings"'));
+        assert.ok(webviewHtml.includes('id="findings"'));
         assert.ok(webviewHtml.includes('SQL Diff'));
         assert.ok(webviewHtml.includes('Unified Text Diff'));
         assert.ok(webviewHtml.includes('SQL Snapshots'));
