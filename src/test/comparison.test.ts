@@ -335,7 +335,7 @@ test('real engine detects team_context_mismatch when team contexts differ betwee
     assert.ok(outcome.result.evidence_sources.includes('team_context'));
 });
 
-test('real loaded engine 1.0.3 uses actual joined table name for LEFT to INNER join explanation', async () => {
+test('real loaded engine uses actual joined table name for LEFT to INNER join explanation', async () => {
     const queryA = 'SELECT SUM(o.total) FROM orders o LEFT JOIN customers c ON o.customer_id = c.id';
     const queryB = 'SELECT SUM(o.total) FROM orders o INNER JOIN customers c ON o.customer_id = c.id';
 
@@ -351,3 +351,28 @@ test('real loaded engine 1.0.3 uses actual joined table name for LEFT to INNER j
     assert.match(finding.description, /without a match in customers/i);
     assert.doesNotMatch(finding.description, /users without matching orders/i);
 });
+
+for (const [name, queryA, queryB, limitationPattern] of [
+    [
+        'UNION to UNION ALL',
+        'SELECT user_id FROM users UNION SELECT user_id FROM archived_users',
+        'SELECT user_id FROM users UNION ALL SELECT user_id FROM archived_users',
+        /set operation/i,
+    ],
+    [
+        'window PARTITION BY change',
+        'SELECT ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY created_at) AS rn FROM events',
+        'SELECT ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at) AS rn FROM events',
+        /window specification/i,
+    ],
+] as const) {
+    test(`real loaded engine reports ${name} as a parser limitation instead of a complete analysis`, async () => {
+        const result = await resultFor(queryA, queryB);
+
+        assert.equal(result.detected_differences.length, 0);
+        assert.equal(result.confidence_level, 'low');
+        assert.ok((result.parser_limitations?.length ?? 0) > 0);
+        assert.ok(result.parser_limitations?.every(note => limitationPattern.test(note)));
+        assert.doesNotMatch(result.verdict ?? '', /No meaningful semantic change detected/);
+    });
+}

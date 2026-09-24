@@ -85,7 +85,8 @@ do not cancel computation. There is no full-analysis worker, timeout, or
 cancellation yet. The detector's opt-in PostgreSQL parser worker is not used by
 this extension.
 
-The pinned 1.0.3 archive includes the table-aware LEFT-to-INNER join
+The pinned 1.0.4 archive reports unsupported lightweight SQL constructs as
+analysis limitations. It also includes the table-aware LEFT-to-INNER join
 explanation that references the actual joined table rather than hard-coded
 users/orders wording.
 
@@ -113,7 +114,7 @@ The current tests exercise real engine results, context and error paths,
 rendering, activation, source snapshots, and panel delivery. They do not drive
 all Quick Pick and Input Box interactions as a human would.
 
-Use F5 for the development host. The detector dependency is the pinned 1.0.3
+Use F5 for the development host. The detector dependency is the pinned 1.0.4
 archive in `vendor/`, installed according to `package-lock.json`; the extension
 does not need a neighboring detector checkout. The source checkout documents
 archive provenance and upgrades in `vendor/README.md`.

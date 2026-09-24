@@ -1,22 +1,26 @@
 # Pinned engine artifact
 
-The extension installs `semantic-delta-detector-1.0.3.tgz` from this directory.
-This is the verified package containing the LEFT-to-INNER join explanation fix.
+The extension installs `semantic-delta-detector-1.0.4.tgz` from this directory.
+This is the verified package containing the analysis-honesty patch: constructs
+the lightweight analyzer does not model (set operations, window
+specifications, `HAVING`, `DISTINCT ON`, row limits and `ORDER BY`) are
+reported as parser limitations with a confidence cap. It also contains the
+1.0.3 table-aware LEFT-to-INNER join explanation.
 
 | Provenance | Value |
 | --- | --- |
-| Package | `semantic-delta-detector@1.0.3` |
+| Package | `semantic-delta-detector@1.0.4` |
 | Source repository | https://github.com/Ryukanchi/semantic-delta-detector |
-| Source commit | Local 1.0.3 build with table-aware join explanation |
-| SHA-256 | `4e9301dd06691ab4d0144ed0aebd7a614174006075281c4a9189a4529e3eb2e0` |
-| Archive size | 402,638 bytes |
+| Source commit | `41b7b887a986fd0eb01c654c170a4d09c2f9929a` (archive built from the same source tree before that commit) |
+| SHA-256 | `91564f45bb7f0c48af8cab99b827fdf622ce338d6f3ff28472d86ba5a622223d` |
+| Archive size | 404,812 bytes |
 | Contents | 71 files, including compiled ESM, declarations, Worker modules and MIT license |
 | Extension baseline before integration | `b8c1f20f0d80e3a1d5652629a8fcff745b49a951` |
 
-Before copying the archive here, its checksum and all 71 files were compared
-with the verified engine checkout and build. No engine source, metadata, build
-output, or archive content was changed. The archive is intended to be versioned
-alongside the extension.
+Before copying the archive here, the engine build passed its full test suite,
+and each packaged JavaScript module was compared with a transpilation of the
+engine source it was built from. The archive is versioned alongside the
+extension.
 
 ## Why an archive
 
@@ -37,8 +41,9 @@ an engine-internal module directly.
 
 The extension still uses the public root `compareSqlQueries` function and its
 lightweight analysis. Shipping the complete engine package does not enable
-PostgreSQL analysis. Keep its compiled package structure intact if PostgreSQL
-is explicitly added later.
+PostgreSQL analysis, so set operations and window specifications appear as
+parser limitations rather than modeled findings. Keep its compiled package
+structure intact if PostgreSQL is explicitly added later.
 
 For an engine upgrade, verify a new source revision and package separately,
 replace the artifact intentionally, and update the manifest, lockfile,
