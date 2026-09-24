@@ -1,0 +1,2359 @@
+{
+  "edges": [
+    {
+      "from": "main",
+      "shape": "Actions / New comparison",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa045d92e246",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "main",
+      "shape": "Actions / Secondary button",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa04a0652aa8",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportMain"
+    },
+    {
+      "from": "main",
+      "shape": "Actions / Primary button",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa04a09bf3a0",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "main",
+      "shape": "Split view",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa04a0f3e17c",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "main",
+      "shape": "Unified view",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa04a101de63",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unified"
+    },
+    {
+      "from": "main",
+      "shape": "Review / Evidence marker · selected",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f24312ee9",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "main",
+      "shape": "Review / Evidence marker · default",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2444c5d8",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "main",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34572a7706",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "main",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345759e2ec",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unified"
+    },
+    {
+      "from": "main",
+      "shape": "Comparison context",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa04dc24bcaa",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "main",
+      "shape": "Status / Confidence · medium",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa04e07b25f4",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "main",
+      "shape": "Review / Finding row",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa04e3e2ecc1",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "main",
+      "shape": "Confidence information icon",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa04e4a5b9fa",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "main",
+      "shape": "Confidence note",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa04e4c11a35",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c12bc6",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c12be1",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportContext"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c12be2",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyContext"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c12bee",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "resultContext"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c12bef",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedContext"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Review / Evidence marker · selected",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c1b50a",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "resultContext"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Review / Evidence marker · default",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c1b50b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filterContext"
+    },
+    {
+      "from": "resultContext",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345d1160ac",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "resultContext"
+    },
+    {
+      "from": "resultContext",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345d3f2fc2",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedContext"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c12bcd",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "contextFilled"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Status / Confidence · medium",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c1b51d",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Review / Finding row",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c1b521",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filterContext"
+    },
+    {
+      "from": "resultContext",
+      "shape": "Confidence note",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4c1b524",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344a323acb",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344a323ae7",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportContext"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344a323ae8",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyContext"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344a323af4",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "resultContext"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344a323af5",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedContext"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345ea56a35",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "resultContext"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345ed41b80",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedContext"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344a323ad2",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "contextFilled"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "Status / Confidence · medium",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344a323b3f",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "Review / Finding row",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344a323b43",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilterContext"
+    },
+    {
+      "from": "unifiedContext",
+      "shape": "Confidence note",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344a323b46",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unified",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3303ac5315",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "unified",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3303ac5330",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportMain"
+    },
+    {
+      "from": "unified",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3303ac5331",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "unified",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3303ac533d",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "unified",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3303ac533e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unified"
+    },
+    {
+      "from": "unified",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3458de85e7",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "unified",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34590cf284",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unified"
+    },
+    {
+      "from": "unified",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3303ac531c",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "unified",
+      "shape": "Status / Confidence · medium",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3303ac5388",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unified",
+      "shape": "Review / Finding row",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3303ac538c",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilter"
+    },
+    {
+      "from": "unified",
+      "shape": "Confidence note",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3303ac538f",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "error",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab325f47fa14",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "error",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab325f47fa30",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "error",
+      "shape": "Error / Retry",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab32612a9b72",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "loading"
+    },
+    {
+      "from": "error",
+      "shape": "Error / Edit",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab326146e570",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "partial",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3219d6f143",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "partial",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3219d6f15e",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportPartial"
+    },
+    {
+      "from": "partial",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3219d6f15f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyPartial"
+    },
+    {
+      "from": "partial",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3219d6f16b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "partial"
+    },
+    {
+      "from": "partial",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3219d6f16c",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedPartial"
+    },
+    {
+      "from": "partial",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345b8ebf2a",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "partial"
+    },
+    {
+      "from": "partial",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345bbef1db",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedPartial"
+    },
+    {
+      "from": "partial",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3219d6f14a",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "limitation"
+    },
+    {
+      "from": "partial",
+      "shape": "Analysis status / Confidence · low",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab321eca778b",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "partial",
+      "shape": "Analysis status / Analysis limitation card",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab321fa92cf4",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "limitation"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3441e08092",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3441e080af",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportPartial"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3441e080b0",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyPartial"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3441e080bc",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "partial"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3441e080bd",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedPartial"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345c5a1d8a",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "partial"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345c8528b7",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedPartial"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3441e08098",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "limitation"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "Partial / Confidence",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3441e08108",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unifiedPartial",
+      "shape": "Partial / Limitation",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3441e0810b",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "limitation"
+    },
+    {
+      "from": "noFindings",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab32151c3257",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "noFindings",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab32151c3272",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportNone"
+    },
+    {
+      "from": "noFindings",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab32151c3273",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyNone"
+    },
+    {
+      "from": "noFindings",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab32151c327f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "noFindings"
+    },
+    {
+      "from": "noFindings",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab32151c3280",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedNone"
+    },
+    {
+      "from": "noFindings",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345a42ffe4",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "noFindings"
+    },
+    {
+      "from": "noFindings",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345a73e368",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedNone"
+    },
+    {
+      "from": "noFindings",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab32151c325e",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "noFindings",
+      "shape": "No findings / Confidence",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3218bb0f85",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unifiedNone",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343eb81c5a",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "unifiedNone",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343eb81c76",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportNone"
+    },
+    {
+      "from": "unifiedNone",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343eb81c77",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyNone"
+    },
+    {
+      "from": "unifiedNone",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343eb81c83",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "noFindings"
+    },
+    {
+      "from": "unifiedNone",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343eb81c84",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedNone"
+    },
+    {
+      "from": "unifiedNone",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345aee1bf4",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "noFindings"
+    },
+    {
+      "from": "unifiedNone",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345b1767e1",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedNone"
+    },
+    {
+      "from": "unifiedNone",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343eb81c61",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "unifiedNone",
+      "shape": "No findings / Confidence",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343eb81cc0",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "filter",
+      "shape": "Actions / New comparison",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d232",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "filter",
+      "shape": "Actions / Secondary button",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d24d",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportMain"
+    },
+    {
+      "from": "filter",
+      "shape": "Actions / Primary button",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d24e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "filter",
+      "shape": "Split view",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d25a",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "filter",
+      "shape": "Unified view",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d25b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilter"
+    },
+    {
+      "from": "filter",
+      "shape": "Evidence marker / 01",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d292",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "filter",
+      "shape": "Evidence marker / 02",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d293",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "filter",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345806e6c4",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "filter",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3458328123",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilter"
+    },
+    {
+      "from": "filter",
+      "shape": "Comparison context",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d239",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "filter",
+      "shape": "Status / Confidence · medium",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d2a5",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "filter",
+      "shape": "Confidence information icon",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d2ab",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "filter",
+      "shape": "Confidence note",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2458d2ac",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "filter",
+      "shape": "Finding / Join change — collapsed",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f6d5f00b3",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3448863044",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3448863060",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportContext"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3448863061",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyContext"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344886306d",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filterContext"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344886306e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilterContext"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Evidence marker / 01",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344886790f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "resultContext"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Evidence marker / 02",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3448867910",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filterContext"
+    },
+    {
+      "from": "filterContext",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345ddbaab6",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filterContext"
+    },
+    {
+      "from": "filterContext",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345e0bc24b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilterContext"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab344886304b",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "contextFilled"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Status / Confidence · medium",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3448867922",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Confidence note",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3448867927",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "filterContext",
+      "shape": "Finding / Join change — collapsed",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3448867929",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "resultContext"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34503f6c6f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34503f6c8b",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportContext"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34503f6c8c",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyContext"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34503f6c98",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filterContext"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34503f6c99",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilterContext"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345f5af7e9",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filterContext"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab345f86a1d6",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilterContext"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34503f6c76",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "contextFilled"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "Status / Confidence · medium",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34503f6ce3",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "Confidence note",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34503f6ce8",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unifiedFilterContext",
+      "shape": "Finding / Join change — collapsed",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34503f6cea",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedContext"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "Actions / New comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343aabc030",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "Actions / Secondary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343aabc04c",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "reportMain"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "Actions / Primary button",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343aabc04d",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "Split view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343aabc059",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "Unified view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343aabc05a",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilter"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "View / Split target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34598d50fd",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "View / Unified target",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3459b9b302",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unifiedFilter"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "Comparison context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343aabc037",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "Status / Confidence · medium",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343aabc0a4",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "Confidence note",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343aabc0a9",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "unifiedFilter",
+      "shape": "Finding / Join change — collapsed",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab343aabc0ab",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unified"
+    },
+    {
+      "from": "entry",
+      "shape": "Entry / Try example",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa0544c6f28f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "entry",
+      "shape": "Upload SQL icon",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa0544ff0e6f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "entry",
+      "shape": "Upload SQL label",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa0545070c4a",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "entry",
+      "shape": "Entry / Optional context",
+      "shapeId": "5b3edfae-0ec7-80cd-8008-aa0545f4f428",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "files",
+      "shape": "Entry / Try example",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3300b2bc8f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "files",
+      "shape": "Paste SQL icon",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3300b2bca1",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "files",
+      "shape": "Paste SQL label",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3300b2bca2",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "files",
+      "shape": "Entry / Optional context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3300b2bc94",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "files",
+      "shape": "Files before / Choose",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33019354c8",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "fileOne"
+    },
+    {
+      "from": "files",
+      "shape": "Files after / Choose",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33021277ae",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "fileAfter"
+    },
+    {
+      "from": "fileAfter",
+      "shape": "Entry / Try example",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33683c541d",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "fileAfter",
+      "shape": "Paste SQL icon",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33683c5430",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "fileAfter",
+      "shape": "Paste SQL label",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33683c5431",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "fileAfter",
+      "shape": "Entry / Optional context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33683c5420",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "fileAfter",
+      "shape": "Files before / Choose",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33683c85d8",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "fileReady"
+    },
+    {
+      "from": "fileAfter",
+      "shape": "Files after / Choose",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33683c85e2",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "fileOne",
+      "shape": "Entry / Try example",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab330238c0b9",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "fileOne",
+      "shape": "Paste SQL icon",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab330238c0cc",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "fileOne",
+      "shape": "Paste SQL label",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab330238c0cd",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "fileOne",
+      "shape": "Entry / Optional context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab330238c0bc",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "fileOne",
+      "shape": "Files before / Choose",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab330238c0e7",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "fileOne",
+      "shape": "Files after / Choose",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab330238c0f1",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "fileReady"
+    },
+    {
+      "from": "fileReady",
+      "shape": "Entry / Try example",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3302a6c439",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "fileReady",
+      "shape": "Paste SQL icon",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3302a6c44c",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "fileReady",
+      "shape": "Paste SQL label",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3302a6c44d",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "fileReady",
+      "shape": "Entry / Optional context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3302a6c43c",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "fileReady",
+      "shape": "Actions / Primary button · disabled",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3302a6c43e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "loading"
+    },
+    {
+      "from": "fileReady",
+      "shape": "Files before / Choose",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3302a6c464",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "fileAfter"
+    },
+    {
+      "from": "fileReady",
+      "shape": "Files after / Choose",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3302a6c46e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "fileOne"
+    },
+    {
+      "from": "ready",
+      "shape": "Entry / Try example",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f2258988d",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "ready",
+      "shape": "Upload SQL icon",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f225898a1",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "ready",
+      "shape": "Upload SQL label",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f225898a2",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "ready",
+      "shape": "Input / Clear after",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab326406732b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "invalid"
+    },
+    {
+      "from": "ready",
+      "shape": "Entry / Optional context",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f22589892",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "ready",
+      "shape": "Actions / Compare SQL · ready",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f24057407",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "loading"
+    },
+    {
+      "from": "readyContext",
+      "shape": "Entry / Try example",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4255d1a",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "readyContext",
+      "shape": "Upload SQL icon",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4255d2e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "readyContext",
+      "shape": "Upload SQL label",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4255d2f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "readyContext",
+      "shape": "Input / Clear after",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4255d62",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "invalidContext"
+    },
+    {
+      "from": "readyContext",
+      "shape": "Entry / Optional context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4255d1f",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "contextFilled"
+    },
+    {
+      "from": "readyContext",
+      "shape": "Actions / Compare SQL · ready",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4255d26",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "resultContext"
+    },
+    {
+      "from": "readyPartial",
+      "shape": "Entry / Try example",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336c90f8bd",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "readyPartial",
+      "shape": "Upload SQL label",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336c90f8d2",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "readyPartial",
+      "shape": "Input / Clear after",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336c90f905",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "invalid"
+    },
+    {
+      "from": "readyPartial",
+      "shape": "Entry / Optional context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336c90f8c2",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "readyPartial",
+      "shape": "Actions / Compare SQL · ready",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336c90f8c9",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "partial"
+    },
+    {
+      "from": "readyNone",
+      "shape": "Entry / Try example",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336a6558f6",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "readyNone",
+      "shape": "Upload SQL label",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336a65590b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "readyNone",
+      "shape": "Input / Clear after",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336a65593e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "invalid"
+    },
+    {
+      "from": "readyNone",
+      "shape": "Entry / Optional context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336a6558fb",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "readyNone",
+      "shape": "Actions / Compare SQL · ready",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336a655902",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "noFindings"
+    },
+    {
+      "from": "invalid",
+      "shape": "Entry / Try example",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3262e21c24",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "invalid",
+      "shape": "Upload SQL icon",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3262e21c38",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "invalid",
+      "shape": "Upload SQL label",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3262e21c39",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "loading",
+      "shape": "10 · Comparing — in progress",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab32617e1564",
+      "trigger": "after-delay",
+      "delay": 2200,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "loading",
+      "shape": "Loading / Cancel",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab3262a47e19",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "context",
+      "shape": "Context dialog / Close",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f6ea9a349",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "context"
+    },
+    {
+      "from": "context",
+      "shape": "Context dialog / Continue SQL only",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f6f57f6e1",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "context"
+    },
+    {
+      "from": "context",
+      "shape": "Context / Use example",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c4011e0e",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "contextFilled"
+    },
+    {
+      "from": "contextFilled",
+      "shape": "Context dialog / Close",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c34c99e6",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "contextFilled"
+    },
+    {
+      "from": "contextFilled",
+      "shape": "Context dialog / Continue SQL only",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c34c99eb",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "contextFilled"
+    },
+    {
+      "from": "contextFilled",
+      "shape": "Context dialog / Apply disabled",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c34c99ec",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyContext"
+    },
+    {
+      "from": "assessment",
+      "shape": "Assessment / Close",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f935da76c",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "assessment",
+      "shape": "Assessment / Back",
+      "shapeId": "d2967f2c-f73f-8086-8008-aa3f93e61375",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "limitation",
+      "shape": "Limitation / Back",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab336a25f95d",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "limitation"
+    },
+    {
+      "from": "reportMain",
+      "shape": "Report / Close",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c6a93585",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "reportMain"
+    },
+    {
+      "from": "reportNone",
+      "shape": "Report / Close",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c7b51b6d",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "reportNone"
+    },
+    {
+      "from": "reportPartial",
+      "shape": "Report / Close",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33c8d1f5f7",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "reportPartial"
+    },
+    {
+      "from": "reportContext",
+      "shape": "Report / Close",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab33ca0025e3",
+      "trigger": "click",
+      "delay": null,
+      "type": "close-overlay",
+      "to": "reportContext"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Start a comparison",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bb8535e9",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 01 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bb9b78e4",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 01 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bbba6df6",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 01 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bbd7ce5f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "entry"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Review a SQL pair",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bbfa150d",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 02 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bc11deca",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 02 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bc2fc0ac",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 02 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bc4d008b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "ready"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Review findings",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bc6d3e5f",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 03 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bc8242a1",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 03 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bca0ca4c",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 03 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bcbec138",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "main"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Inspect a finding",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bcdee010",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 04 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bcf6277e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 04 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bd14d14e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 04 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bd32e35b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "filter"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / No findings",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bd539637",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "noFindings"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 05 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bd692f37",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "noFindings"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 05 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bd886adf",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "noFindings"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 05 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bda8073b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "noFindings"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Partial analysis",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bdcbf13b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "partial"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 06 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bde69cd3",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "partial"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 06 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34be27bcfc",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "partial"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 06 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34be478073",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "partial"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Operational error",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34be694831",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "error"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 07 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34be83738e",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "error"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 07 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bea33d97",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "error"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 07 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bec23ad8",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "error"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Risk vs confidence",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bee39c52",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 08 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34befb39c7",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 08 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bf1bbca1",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 08 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bf3aa60a",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "assessment"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Choose SQL files",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bf5c3b5c",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 09 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bf770336",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 09 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bf982371",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 09 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bfb80b34",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Missing input",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bfdaa9fa",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "invalid"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 10 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34bff29d92",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "invalid"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 10 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c013768d",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "invalid"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 10 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c033ee79",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "invalid"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Add per-query context",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c0573591",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 11 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c071dfff",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 11 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c09318b4",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 11 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c0b3a6bf",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "context"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide / Unified SQL view",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c0d79756",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unified"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 12 / number",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c0f205e8",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unified"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 12 / title",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c113a968",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unified"
+    },
+    {
+      "from": "guide",
+      "shape": "Guide 12 / description",
+      "shapeId": "8d7fa7fa-c52b-802e-8008-ab34c1346094",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "unified"
+    },
+    {
+      "from": "invalidContext",
+      "shape": "Entry / Try example",
+      "shapeId": "8c4682f0-cb03-806c-8008-ac8cb1b56a06",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "readyContext"
+    },
+    {
+      "from": "invalidContext",
+      "shape": "Upload SQL icon",
+      "shapeId": "8c4682f0-cb03-806c-8008-ac8cb1b56a1b",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "invalidContext",
+      "shape": "Upload SQL label",
+      "shapeId": "8c4682f0-cb03-806c-8008-ac8cb1b56a1c",
+      "trigger": "click",
+      "delay": null,
+      "type": "navigate-to",
+      "to": "files"
+    },
+    {
+      "from": "invalidContext",
+      "shape": "Entry / Optional context",
+      "shapeId": "8c4682f0-cb03-806c-8008-ac8cb1b56a0b",
+      "trigger": "click",
+      "delay": null,
+      "type": "open-overlay",
+      "to": "contextFilled"
+    }
+  ],
+  "overflow": [],
+  "outside": [],
+  "unreachable": [
+    "foundations"
+  ],
+  "validation": 0
+}
