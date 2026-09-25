@@ -3,6 +3,10 @@
   "displayName": "semantic-delta-extension",
   "description": "Detect semantic conflicts between SQL queries",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ryukanchi/semantic-delta-extension.git"
+  },
   "engines": {
     "vscode": "^1.110.0"
   },
@@ -10,15 +14,20 @@
     "Other"
   ],
   "dependencies": {
-    "semantic-delta-detector": "file:../semantic-delta-detector"
+    "semantic-delta-detector": "file:vendor/semantic-delta-detector-1.0.4.tgz"
   },
   "activationEvents": [
+    "onCommand:semantic-delta.compareSql",
     "onCommand:semantic-delta.runDemo",
     "onCommand:semantic-delta.runExample"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "semantic-delta.compareSql",
+        "title": "Semantic Delta: Compare SQL"
+      },
       {
         "command": "semantic-delta.runDemo",
         "title": "Semantic Delta: Run Demo"
@@ -31,11 +40,15 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "verify:engine": "node scripts/verify-engine.mjs",
+    "preinstall": "npm run verify:engine",
+    "compile": "npm run verify:engine && tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "node --test out/test/*.test.js",
+    "pretest:extension": "npm run compile && npm run lint",
+    "test:extension": "vscode-test"
   },
   "devDependencies": {
     "@types/vscode": "^1.110.0",
