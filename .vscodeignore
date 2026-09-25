@@ -13,3 +13,7 @@ out/test/**
 .cache/**
 vendor/**
 scripts/**
+docs/**
+node_modules/semantic-delta-detector/docs/**
+.github/**
+.claude/**

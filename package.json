@@ -3,6 +3,10 @@
   "displayName": "semantic-delta-extension",
   "description": "Detect semantic conflicts between SQL queries",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ryukanchi/semantic-delta-extension.git"
+  },
   "engines": {
     "vscode": "^1.110.0"
   },
