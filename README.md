@@ -85,14 +85,16 @@ do not cancel computation. There is no full-analysis worker, timeout, or
 cancellation yet. The detector's opt-in PostgreSQL parser worker is not used by
 this extension.
 
-The pinned 1.0.4 archive reports unsupported lightweight SQL constructs as
-analysis limitations. It also includes the table-aware LEFT-to-INNER join
-explanation that references the actual joined table rather than hard-coded
-users/orders wording.
+The pinned 1.1.0 archive requires enough evidence of a single supported SELECT
+query before returning a semantic assessment. Unsupported SQL input is shown
+as Not assessed. Constructs that can be analyzed only partially continue to
+produce analysis limitations and conservative confidence. The package also
+retains the table-aware LEFT-to-INNER join explanation.
 
-Empty or whitespace-only input is rejected before loading the engine. Other
-thrown engine/import errors are operational failures, not synthetic low-risk
-results; the public API does not provide structured exception codes. Parser
+Empty or whitespace-only input is rejected before loading the engine. The
+detector's `SEMANTIC_DELTA_UNANALYZABLE_SQL` error is shown as input/analysis
+unavailable, without risk, confidence, similarity, findings, or business impact.
+Other thrown engine/import errors remain operational failures. Parser
 limitations returned in a valid result remain part of that result.
 
 ## Development and verification
@@ -114,7 +116,7 @@ The current tests exercise real engine results, context and error paths,
 rendering, activation, source snapshots, and panel delivery. They do not drive
 all Quick Pick and Input Box interactions as a human would.
 
-Use F5 for the development host. The detector dependency is the pinned 1.0.4
+Use F5 for the development host. The detector dependency is the pinned 1.1.0
 archive in `vendor/`, installed according to `package-lock.json`; the extension
 does not need a neighboring detector checkout. The source checkout documents
 archive provenance and upgrades in `vendor/README.md`.
