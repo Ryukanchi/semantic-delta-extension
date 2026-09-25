@@ -142,10 +142,58 @@ for (const [label, load] of [
     });
 }
 
-test('an engine rejection for nonempty input is not guessed from its error text', async () => {
-    const outcome = await compareQueries('-- comment only', after);
+test('an uncoded engine rejection is not classified from its error text', async () => {
+    const outcome = await compareQueries('-- comment only', after, async () => ({
+        compareSqlQueries: () => { throw new Error('Query A SQL input must contain analyzable content.'); },
+    }));
     assert.equal(outcome.kind, 'operational-error');
     assert.ok(!('result' in outcome));
+});
+
+test('coded unanalyzable input is an unavailable assessment, including for Markdown commands', async () => {
+    const codedError = {
+        code: 'SEMANTIC_DELTA_UNANALYZABLE_SQL',
+        query: 'B',
+        reason: 'no_query_structure',
+        message: 'Query B has no recognizable SELECT projection or source.',
+    };
+    const load: EngineLoader = async () => ({
+        compareSqlQueries: () => { throw codedError; },
+    });
+    const outcome = await compareQueries('SELECT id FROM users', 'hello world', load);
+    assert.deepEqual(outcome, {
+        kind: 'analysis-unavailable',
+        query: 'B',
+        message: codedError.message,
+    });
+    assert.ok(!('result' in outcome));
+
+    const recorded = recordingView();
+    await presentComparison('SELECT id FROM users', 'hello world', recorded.view, undefined, load);
+    assert.equal(recorded.reports.length, 0);
+    assert.equal(recorded.operationalErrors.length, 0);
+    assert.equal(recorded.validationErrors.length, 1);
+    assert.ok(recorded.validationErrors[0].includes('analysis unavailable'));
+    assert.ok(recorded.validationErrors[0].includes('Risk: Not assessed. Confidence: Not assessed.'));
+});
+
+test('coded unanalyzable input is recognized across engine copies on the context path', async () => {
+    const codedError = {
+        code: 'SEMANTIC_DELTA_UNANALYZABLE_SQL',
+        query: 'A',
+        reason: 'multiple_statements',
+    };
+    const load: EngineLoader = async () => ({
+        compareMetricDefinitions: () => { throw codedError; },
+    });
+    const outcome = await compareQueries('SELECT 1; SELECT 2', 'SELECT 1', {
+        before: { metric_name: 'before' },
+    }, load);
+    assert.deepEqual(outcome, {
+        kind: 'analysis-unavailable',
+        query: 'A',
+        message: 'Semantic Delta could not recognize enough supported query structure to analyze this input.',
+    });
 });
 
 test('successful comparison delivers one report and no error notification', async () => {
