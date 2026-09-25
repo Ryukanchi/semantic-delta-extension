@@ -87,4 +87,3 @@ test('buildSqlQuickPickCandidates returns empty array when only After file is pr
     const candidates = buildSqlQuickPickCandidates(raw, file => file === 'uri-after');
     assert.deepEqual(candidates, []);
 });
-
