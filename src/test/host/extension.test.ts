@@ -144,6 +144,37 @@ suite('Extension Host integration', () => {
         panel.dispose();
     });
 
+    test('ReviewPanel shows coded unanalyzable input as not assessed', async () => {
+        const panel = ReviewPanel.createOrShow();
+        const outcome = await executeCompare(
+            { label: 'before.sql', text: 'SELECT id FROM users;' },
+            { label: 'after.sql', text: 'hello world' },
+            panel,
+            async () => ({
+                compareSqlQueries: () => {
+                    throw Object.assign(new Error('Query B is outside the supported SELECT-query scope.'), {
+                        code: 'SEMANTIC_DELTA_UNANALYZABLE_SQL',
+                        query: 'B',
+                        reason: 'not_a_select_query',
+                    });
+                },
+            }),
+        );
+
+        assert.equal(outcome.kind, 'analysis-unavailable');
+        const webviewHtml = (panel as unknown as { panel: vscode.WebviewPanel }).panel.webview.html;
+        assert.ok(webviewHtml.includes('ANALYSIS UNAVAILABLE'));
+        assert.ok(webviewHtml.includes('Risk:</span> <span class="badge-value">Not assessed</span>'));
+        assert.ok(webviewHtml.includes('Confidence:</span> <span class="badge-value">Not assessed</span>'));
+        assert.ok(!webviewHtml.includes('Similarity:'));
+        assert.ok(!webviewHtml.includes('href="#findings"'));
+        assert.ok(!webviewHtml.includes('Business Impact'));
+        assert.ok(!webviewHtml.includes('Operational Analysis Error'));
+        assert.ok(webviewHtml.includes('Unified Text Diff'));
+        assert.ok(webviewHtml.includes('SQL Snapshots'));
+        panel.dispose();
+    });
+
     test('ReviewPanel rejects an older result after a newer comparison starts', () => {
         const panel = ReviewPanel.createOrShow();
         const oldId = panel.startComparison('old-before.sql', 'old-after.sql');

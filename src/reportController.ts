@@ -19,6 +19,10 @@ export async function presentComparison(
         view.showValidationError(`Semantic Delta: ${outcome.message} No semantic assessment was produced.`);
         return;
     }
+    if (outcome.kind === 'analysis-unavailable') {
+        view.showValidationError(`Semantic Delta analysis unavailable: ${outcome.message} Risk: Not assessed. Confidence: Not assessed.`);
+        return;
+    }
     if (outcome.kind === 'operational-error') {
         view.showOperationalError(`Semantic Delta analysis failed: ${outcome.message} Risk: Not assessed. Confidence: Not assessed.`);
         return;

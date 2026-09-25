@@ -14,7 +14,7 @@
     "Other"
   ],
   "dependencies": {
-    "semantic-delta-detector": "file:vendor/semantic-delta-detector-1.0.4.tgz"
+    "semantic-delta-detector": "file:vendor/semantic-delta-detector-1.1.0.tgz"
   },
   "activationEvents": [
     "onCommand:semantic-delta.compareSql",

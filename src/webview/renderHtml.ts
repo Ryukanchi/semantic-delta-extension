@@ -341,6 +341,45 @@ function renderContent(state: WebviewState): string {
         `;
     }
 
+    if (outcome.kind === 'analysis-unavailable') {
+        const navItems: ReviewNavItem[] = [
+            { id: 'analysis-unavailable', label: 'Analysis unavailable' },
+            { id: 'sql-diff', label: 'SQL Diff' },
+            { id: 'sql-snapshots', label: 'Snapshots' },
+        ];
+
+        return `
+            ${renderReviewNav(navItems)}
+
+            <div id="analysis-unavailable">
+                <div class="header-badges">
+                    ${renderBadge('Risk', 'Not assessed', 'neutral')}
+                    ${renderBadge('Confidence', 'Not assessed', 'neutral')}
+                    <span class="badge badge-amber">ANALYSIS UNAVAILABLE</span>
+                </div>
+
+                <div class="card card-validation-error">
+                    <h2 class="error-title">Input not analyzable by Semantic Delta${outcome.query ? ` (Query ${outcome.query})` : ''}</h2>
+                    <p class="error-message">${escapeHtml(outcome.message)}</p>
+                    <p class="error-note">Semantic Delta could not assess this comparison. It did not validate SQL syntax.</p>
+                </div>
+            </div>
+
+            <div id="sql-diff" class="section">
+                <h2 class="section-title">SQL Diff</h2>
+                ${renderSqlDiff(beforeLabel, afterLabel, beforeSql, afterSql)}
+            </div>
+
+            <div id="sql-snapshots" class="section">
+                <h2 class="section-title">Submitted SQL Snapshots</h2>
+                <div class="sql-grid">
+                    ${renderSqlBlock('Before SQL', beforeLabel, beforeSql)}
+                    ${renderSqlBlock('After SQL', afterLabel, afterSql)}
+                </div>
+            </div>
+        `;
+    }
+
     if (outcome.kind === 'operational-error') {
         const navItems: ReviewNavItem[] = [
             { id: 'operational-error', label: 'Error' },
@@ -441,6 +480,7 @@ export function renderHtml(state: WebviewState): string {
         .section,
         .card,
         .section-summary,
+        #analysis-unavailable,
         #operational-error {
             scroll-margin-top: 16px;
         }

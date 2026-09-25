@@ -1,6 +1,7 @@
 import * as assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { SemanticComparisonResult } from 'semantic-delta-detector' with { 'resolution-mode': 'import' };
+import { compareQueries } from '../comparison';
 import { escapeHtml, formatDecisionRisk, renderHtml, renderReviewNav } from '../webview/renderHtml';
 import type { WebviewState } from '../webview/types';
 
@@ -260,6 +261,70 @@ test('renderHtml renders validation error with not assessed badges and submitted
     assert.ok(html.includes('Query A must contain SQL text.'));
     assert.ok(html.includes('No semantic assessment was produced.'));
     assert.ok(html.includes('SELECT * FROM users'));
+});
+
+test('renderHtml presents unanalyzable input without a semantic result or operational error', () => {
+    const state: WebviewState = {
+        kind: 'comparison',
+        beforeLabel: 'before.sql',
+        afterLabel: 'after.sql',
+        beforeSql: 'SELECT id FROM users;',
+        afterSql: 'hello world',
+        outcome: {
+            kind: 'analysis-unavailable',
+            query: 'B',
+            message: 'Query B lacks supported structure: <script>alert(1)</script>',
+        },
+    };
+
+    const html = renderHtml(state);
+    assert.ok(html.includes('ANALYSIS UNAVAILABLE'));
+    assert.ok(html.includes('Input not analyzable by Semantic Delta (Query B)'));
+    assert.ok(html.includes('Risk:</span> <span class="badge-value">Not assessed</span>'));
+    assert.ok(html.includes('Confidence:</span> <span class="badge-value">Not assessed</span>'));
+    assert.ok(html.includes('Query B lacks supported structure: &lt;script&gt;alert(1)&lt;/script&gt;'));
+    assert.ok(!html.includes('<script>'));
+    assert.ok(!html.includes('Similarity:'));
+    assert.ok(!html.includes('LOW RISK'));
+    assert.ok(!html.includes('badge-value">LOW</span>'));
+    assert.ok(!html.includes('badge-value">HIGH</span>'));
+    assert.ok(!html.includes('Findings ('));
+    assert.ok(!html.includes('href="#findings"'));
+    assert.ok(!html.includes('Business Impact'));
+    assert.ok(!html.includes('Operational Analysis Error'));
+    assert.ok(html.includes('href="#analysis-unavailable"'));
+    assert.ok(html.includes('href="#sql-diff"'));
+    assert.ok(html.includes('href="#sql-snapshots"'));
+    assert.ok(html.includes('Unified Text Diff'));
+    assert.ok(html.includes('SELECT id FROM users;'));
+    assert.ok(html.includes('hello world'));
+    assert.ok(html.includes("default-src 'none'"));
+});
+
+test('vendored detector 1.1.0 and Review WebView keep free text unassessed', async () => {
+    const beforeSql = 'SELECT id FROM users;';
+    const afterSql = 'hello world';
+    const outcome = await compareQueries(beforeSql, afterSql);
+    assert.equal(outcome.kind, 'analysis-unavailable');
+    const html = renderHtml({
+        kind: 'comparison',
+        beforeLabel: 'before.sql',
+        afterLabel: 'after.sql',
+        beforeSql,
+        afterSql,
+        outcome,
+    });
+
+    assert.ok(html.includes('Input not analyzable by Semantic Delta (Query B)'));
+    assert.ok(html.includes('Risk:</span> <span class="badge-value">Not assessed</span>'));
+    assert.ok(html.includes('Confidence:</span> <span class="badge-value">Not assessed</span>'));
+    assert.ok(!html.includes('Similarity:'));
+    assert.ok(!html.includes('Findings ('));
+    assert.ok(!html.includes('Business Impact'));
+    assert.ok(!html.includes('LOW RISK'));
+    assert.ok(!html.includes('Operational Analysis Error'));
+    assert.ok(html.includes('Unified Text Diff'));
+    assert.ok(html.includes('Submitted SQL Snapshots'));
 });
 
 test('renderHtml renders operational error with not assessed badges and error message', () => {
